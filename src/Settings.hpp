@@ -30,6 +30,9 @@ static inline const sf::FloatRect EnemyArea{0, Game::GridSize, Game::GameSize.x,
 /** The area the spider can move in */
 static inline const sf::FloatRect SpiderArea{0, Game::GridSize * 16, Game::GameSize.x, Game::GridSize * 15};
 
+/** The area the scorpion can move in */
+static inline const sf::FloatRect ScorpionArea{0, Game::GridSize, Game::GameSize.x, Game::GameSize.y - 5 * Game::GridSize};
+
 /** The area mushrooms spawn in */
 static inline const sf::FloatRect ShroomArea{0, Game::GridSize * 4, Game::GameSize.x, Game::GameSize.y - Game::GridSize * 6};
 

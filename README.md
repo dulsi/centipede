@@ -32,12 +32,9 @@ Big thanks to these blog posts by the RetroGame Deconstruction Zone:
 - [Descent Mechanics](https://www.retrogamedeconstructionzone.com/2020/11/the-descent-of-centipede-part-1.html)
 
 ## Missing Features
-- Score system
-- HUD overlay for lives / score counter
 - Change the laser system to that of the original game (only one laser on screen at a time)
 - Flea (drop mushrooms)
 - Scorpion (poisons mushrooms)
-- Players collide with mushrooms
 
 ## Sprite License
 

@@ -49,16 +49,17 @@ int Shroom::damage()
     m_health -= 1;
 
     // Step through the textures for different damage levels,
+    auto& texOffset = m_poisoned ? PoisonTexOffset : NormalTexOffset;
     switch (m_health)
     {
     case 3:
-        this->setTextureRect(NormalTexOffset[m_type][1]);
+        this->setTextureRect(texOffset[m_type][1]);
         break;
     case 2:
-        this->setTextureRect(NormalTexOffset[m_type][2]);
+        this->setTextureRect(texOffset[m_type][2]);
         break;
     case 1:
-        this->setTextureRect(NormalTexOffset[m_type][3]);
+        this->setTextureRect(texOffset[m_type][3]);
         break;
     case 0:
         // nothing to do, dead now. will get removed by manager
@@ -90,7 +91,18 @@ void Shroom::setType(int type)
     m_type = type;
     if (m_health > 0)
     {
-        this->setTextureRect(NormalTexOffset[m_type][4 - m_health]);
+        auto& texOffset = m_poisoned ? PoisonTexOffset : NormalTexOffset;
+        this->setTextureRect(texOffset[m_type][4 - m_health]);
+    }
+}
+
+void Shroom::poison()
+{
+    m_poisoned = true;
+    if (m_health > 0)
+    {
+        auto& texOffset = m_poisoned ? PoisonTexOffset : NormalTexOffset;
+        this->setTextureRect(texOffset[m_type][4 - m_health]);
     }
 }
 
@@ -133,6 +145,22 @@ bool MushroomManager::checkSpiderCollision(sf::FloatRect spider)
     if (hit_it != m_shrooms.end())
     {
         m_shrooms.erase(hit_it);
+        return true;
+    }
+    return false;
+}
+
+/** Remove any mushrooms that the scorpion intersects with */
+bool MushroomManager::checkScorpionCollision(sf::FloatRect scorpion)
+{
+    // construct lambda predicate
+    auto isHit = [&](const Shroom& s) { return scorpion.intersects(s.getGlobalBounds()); };
+    // find first intersecting mushroom
+    auto hit_it = std::find_if(m_shrooms.begin(), m_shrooms.end(), isHit);
+    // remove if found
+    if (hit_it != m_shrooms.end())
+    {
+        hit_it->poison();
         return true;
     }
     return false;

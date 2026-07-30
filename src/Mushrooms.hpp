@@ -47,6 +47,8 @@ class Shroom : public sf::Sprite
 
     void setType(int type);
 
+    void poison();
+
   private:
     // Constant regions for mushroom textures in the sprite-sheet
     static inline const sf::IntRect NormalTexOffset[3][4] = 
@@ -66,6 +68,8 @@ class Shroom : public sf::Sprite
     static inline const sf::IntRect Damage3TexOffset;
 
     int m_type;
+
+    bool m_poisoned = false;
 
     /** The health of mushroom (starts at 4) */
     int m_health = 4;
@@ -104,7 +108,16 @@ class MushroomManager : public sf::Drawable
      * @param spider The spider collider
      * @return true if the spider hit a mushroom
      */
-    bool checkSpiderCollision(sf::FloatRect other);
+    bool checkSpiderCollision(sf::FloatRect spider);
+
+    /**
+     * Checks for a scorpion colliding with any mushroom.
+     * Immediately poisons the mushroom if hit
+     *
+     * @param scorpion The scorpion collider
+     * @return true if the spider hit a mushroom
+     */
+    bool checkScorpionCollision(sf::FloatRect scorpion);
 
     /**
      * Checks for a laser colliding with any mushroom.

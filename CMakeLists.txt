@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
                 src/Player.cpp
                 src/Laser.cpp
                 src/Mushrooms.cpp
+                src/Scorpion.cpp
                 src/Spider.cpp
                 src/Centipede.cpp)
 

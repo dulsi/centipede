@@ -25,6 +25,7 @@ Engine::Engine()
       m_shroomMan{Game::ShroomArea},
       m_centipede{Game::EnemyArea, m_shroomMan},
       m_spider{Game::SpiderArea},
+      m_scorpion{Game::ScorpionArea},
       m_totalGameTime{sf::Time::Zero}
 {
 
@@ -203,6 +204,8 @@ void Engine::update(const float dtSeconds)
 
     m_shroomMan.checkSpiderCollision(m_spider.getCollider());
 
+    m_shroomMan.checkScorpionCollision(m_scorpion.getCollider());
+
     for (auto& player : m_player)
     {
         if (player.isDead())
@@ -234,6 +237,12 @@ void Engine::update(const float dtSeconds)
             continue;
         }
 
+        if (m_scorpion.checkLaserCollision(laser.getCollider()))
+        {
+            laser.deactivate();
+            continue;
+        }
+
         if (m_shroomMan.checkLaserCollision(laser.getCollider()))
         {
             laser.deactivate();
@@ -253,6 +262,7 @@ void Engine::update(const float dtSeconds)
 
     m_centipede.update(dtSeconds);
     m_spider.update(dtSeconds);
+    m_scorpion.update(dtSeconds);
     for (auto& player : m_player)
     {
         if (!player.isDead())
@@ -301,6 +311,8 @@ void Engine::draw()
         // draw all the objects during game-play
 
         m_window.draw(m_spider);
+
+        m_window.draw(m_scorpion);
 
         m_window.draw(m_shroomMan);
 

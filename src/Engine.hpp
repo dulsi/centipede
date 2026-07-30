@@ -16,6 +16,7 @@ Declare the Game Engine. Engine::run() is the main entrypoint into the game.
 #include "Laser.hpp"
 #include "Mushrooms.hpp"
 #include "Player.hpp"
+#include "Scorpion.hpp"
 #include "Spider.hpp"
 #include "TextureManager.hpp"
 
@@ -77,6 +78,9 @@ class Engine
 
     /** The spider antagonist moves randomly and clears mushrooms */
     Spider m_spider;
+
+    /** The scorpion antagonist poisons mushrooms */
+    Scorpion m_scorpion;
 
     /** A pool of 30 laser objects to recycle (should be plenty) */
     std::array<Laser, 30> m_lasers;
