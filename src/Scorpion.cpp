@@ -84,7 +84,7 @@ void Scorpion::update(float deltaTime)
     }
 
     const auto& size = m_sprite.getLocalBounds().getSize();
-    if (m_sprite.getPosition().x < m_bounds.top - size.x / 2.f)
+    if (m_sprite.getPosition().x < m_bounds.left - size.x / 2.f)
     {
         m_alive = false;
     }
@@ -93,7 +93,7 @@ void Scorpion::update(float deltaTime)
 /**  */
 bool Scorpion::checkLaserCollision(sf::FloatRect other)
 {
-    // only living spiders can be hit
+    // only living scorpions can be hit
     bool wasHit = m_alive && m_sprite.getGlobalBounds().intersects(other);
     if (wasHit)
     {

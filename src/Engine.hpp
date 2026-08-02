@@ -12,6 +12,7 @@ Declare the Game Engine. Engine::run() is the main entrypoint into the game.
 
 #include "SFML/Graphics.hpp"
 
+#include "Ant.hpp"
 #include "Centipede.hpp"
 #include "Laser.hpp"
 #include "Mushrooms.hpp"
@@ -75,6 +76,9 @@ class Engine
 
     /** All the centipedes on the screen */
     Centipede m_centipede;
+
+    /** The ant antagonist makes mushrooms */
+    Ant m_ant;
 
     /** The spider antagonist moves randomly and clears mushrooms */
     Spider m_spider;

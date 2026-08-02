@@ -24,6 +24,7 @@ Engine::Engine()
       m_player{{Game::PlayerArea, 0}, {Game::PlayerArea, 1}},
       m_shroomMan{Game::ShroomArea},
       m_centipede{Game::EnemyArea, m_shroomMan},
+      m_ant{Game::EnemyArea, m_shroomMan},
       m_spider{Game::SpiderArea},
       m_scorpion{Game::ScorpionArea},
       m_totalGameTime{sf::Time::Zero}
@@ -135,7 +136,9 @@ void Engine::input()
                 {
                     laser.deactivate();
                 }
+                m_ant.reset();
                 m_spider.reset();
+                m_scorpion.reset();
 
                 m_player[0].spawn(); // respawn the player if they are dead
                 if (players == 2)
@@ -214,7 +217,11 @@ void Engine::update(const float dtSeconds)
         }
         if (!m_spider.isDead())
         {
-            player.checkSpiderCollision(m_spider.getCollider());
+            player.checkEnemyCollision(m_spider.getCollider());
+        }
+        if (!m_ant.isDead())
+        {
+            player.checkEnemyCollision(m_ant.getCollider());
         }
 
         if (m_centipede.checkPlayerCollision(player.getCollider()))
@@ -243,6 +250,13 @@ void Engine::update(const float dtSeconds)
             continue;
         }
 
+        if (m_ant.checkLaserCollision(laser.getCollider()))
+        {
+            laser.deactivate();
+            m_player[laser.getPlayer()].addScore(200);
+            continue;
+        }
+
         if (m_shroomMan.checkLaserCollision(laser.getCollider()))
         {
             laser.deactivate();
@@ -261,6 +275,7 @@ void Engine::update(const float dtSeconds)
     }
 
     m_centipede.update(dtSeconds);
+    m_ant.update(dtSeconds);
     m_spider.update(dtSeconds);
     m_scorpion.update(dtSeconds);
     for (auto& player : m_player)
@@ -309,12 +324,13 @@ void Engine::draw()
     else if ((state == State::Playing) || (state == State::LevelChange))
     {
         // draw all the objects during game-play
+        m_window.draw(m_shroomMan);
+
+        m_window.draw(m_ant);
 
         m_window.draw(m_spider);
 
         m_window.draw(m_scorpion);
-
-        m_window.draw(m_shroomMan);
 
         // draw centipede(s)
         m_window.draw(m_centipede);

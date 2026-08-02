@@ -3,7 +3,7 @@ SPDX-License-Identifier: BSD-3-Clause
 Copyright (c) 2026 Dennis Payne
 
 Description:
-The scorpion class moves across the field poisoning mushrooms.
+The ant class moves down making mushrooms.
 */
 
 #pragma once
@@ -11,34 +11,36 @@ The scorpion class moves across the field poisoning mushrooms.
 
 #include <SFML/Graphics.hpp>
 
-class Scorpion : public sf::Drawable
+#include "Mushrooms.hpp"
+
+class Ant : public sf::Drawable
 {
   public:
-    /** Construct a new Scorpion object that moves within `bounds` */
-    Scorpion(sf::FloatRect bounds);
+    /** Construct a new Ant object that moves within `bounds` */
+    Ant(sf::FloatRect bounds, MushroomManager& shroomMan);
     // no default constructor
-    Scorpion() = delete;
+    Ant() = delete;
 
     void reset();
 
     /** Set the starting position and state */
     void spawn();
 
-    /** Update the scorpion's movement based on elapsed time */
+    /** Update the ant's movement based on elapsed time */
     void update(float deltaTime);
 
-    /** Draw only living scorpions to the target
+    /** Draw only living ants to the target
      * Sprite overload
      */
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-    /** Check if a laser hit this scorpion, and 'kill' it
-     * @return true if the scorpion was hit.
+    /** Check if a laser hit this ant, and 'kill' it
+     * @return true if the ant was hit.
      */
     bool checkLaserCollision(sf::FloatRect collider);
 
     /**
-     * Get the scorpion collider for collisions
+     * Get the ant collider for collisions
      *
      * @return sf::FloatRect
      */
@@ -50,18 +52,18 @@ class Scorpion : public sf::Drawable
     static constexpr int AnimationFrames = 4;
 
     /** The location of the scorpion texture in the sprite-sheet */
-    static inline const sf::IntRect ScorpionAnimationOffset[AnimationFrames] =
+    static inline const sf::IntRect AntAnimationOffset[AnimationFrames] =
     {
-      {16, 16, 60, 32}, {96, 16, 60, 32}, {176, 16, 60, 32}, {256, 16, 60, 32}
+      {16, 16, 32, 35}, {64, 16, 32, 35}, {112, 16, 32, 35}, {160, 16, 32, 35}
     };
     /** Speed of movement in px/s for both x and y components */
-    static constexpr float Speed = 240;
+    static constexpr float Speed = 480;
 
     /** Seconds between changing animation */
     const double m_animationDuration = 0.05;
 
-    /** Seconds to wait before re-spawning */
-    const double m_respawnDuration = 5;
+    /** Chance of making a mushroom */
+    const int m_mushroomChance = 30;
 
     const size_t m_spawnChance = 5;
 
@@ -74,13 +76,19 @@ class Scorpion : public sf::Drawable
     /** Random number generator for erratic movement */
     std::mt19937 m_rng;
 
+    /** Reference to the mushrooms so we can create more.
+     * Aggregate member (not owned).
+     */
+    MushroomManager& m_shroomMan;
+
     int m_animation;
 
     /** If the scorpion is alive or note */
     bool m_alive = true;
 
+    bool m_respawnNow = false;
+
     // A bunch of properties for controlling the scorpion movement state-machine
     double m_moveTimer    = 0;
     double m_animationTimer = 0;
-    double m_respawnTimer = 0;
 };

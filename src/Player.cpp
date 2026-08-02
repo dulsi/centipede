@@ -222,10 +222,10 @@ void Player::update(float deltaTime, Engine& engine)
     }
 }
 
-/** Detect if hit by the spider and lose a life */
-bool Player::checkSpiderCollision(sf::FloatRect spider)
+/** Detect if hit by the enemy and lose a life */
+bool Player::checkEnemyCollision(sf::FloatRect enemy)
 {
-    if (this->getGlobalBounds().intersects(spider))
+    if (this->getGlobalBounds().intersects(enemy))
     {
         die();
         return true;

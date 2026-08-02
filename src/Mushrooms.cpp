@@ -17,7 +17,7 @@ The MushroomManager and Shroom class definition.
 #include "TextureManager.hpp"
 
 /** Base constructor from x,y coordinates */
-Shroom::Shroom(int type, float x, float y) : m_type(type)
+Shroom::Shroom(int type, float x, float y) : m_type(type), m_poisoned(false), m_health(4)
 {
 
     const auto& tex = TextureManager::GetTexture("graphics/mushroom.png");
@@ -198,7 +198,16 @@ bool MushroomManager::checkLaserCollision(sf::FloatRect laser)
  */
 void MushroomManager::addMushroom(sf::Vector2f location)
 {
-    m_shrooms.emplace_back(m_type, location);
+    location.x = static_cast<float>(static_cast<int>(location.x - (Game::GridSize / 2.f)) / Game::GridSize * Game::GridSize) + Game::GridSize / 2.f;
+    location.y = static_cast<float>(static_cast<int>(location.y - (Game::GridSize / 2.f)) / Game::GridSize * Game::GridSize) + Game::GridSize / 2.f;
+    auto iter = std::find_if(m_shrooms.begin(), m_shrooms.end(), [location](const Shroom& shroom){
+        auto position = shroom.getPosition();
+        return position.x == location.x && position.y == location.y;
+    });
+    if (iter == m_shrooms.end())
+    {
+        m_shrooms.emplace_back(m_type, location);
+    }
 }
 
 void MushroomManager::nextLevel()
@@ -233,8 +242,8 @@ void MushroomManager::reset()
     std::uniform_int_distribution<int> random_x(0, x_range);
     std::uniform_int_distribution<int> random_y(0, y_range);
 
-    // Create 30 mushroom sprites in random locations
-    for (size_t i = 0; i < 30; ++i)
+    // Create 35 mushroom sprites in random locations
+    for (size_t i = 0; i < 35; ++i)
     {
         // random grid cells need to be offset so they refer to the center
         const float gridx = static_cast<float>(Game::GridSize * random_x(m_rng));

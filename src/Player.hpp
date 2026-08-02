@@ -46,12 +46,12 @@ class Player : public sf::Sprite
     void drawScore(sf::RenderWindow& window);
 
     /**
-     * Check for collisions with spider and decrement life counter
-     * @param spider Collider of the spider
+     * Check for collisions with enemy and decrement life counter
+     * @param enemy Collider of the enemy
      * @return true if hit by spider
      * @return false otherwise
      */
-    bool checkSpiderCollision(sf::FloatRect spider);
+    bool checkEnemyCollision(sf::FloatRect enemy);
 
     /**
      * Causes player to lose a life

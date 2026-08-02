@@ -33,7 +33,6 @@ Big thanks to these blog posts by the RetroGame Deconstruction Zone:
 
 ## Missing Features
 - Change the laser system to that of the original game (only one laser on screen at a time)
-- Flea (drop mushrooms)
 - Scorpion (poisons mushrooms)
 
 ## Sprite License
@@ -43,6 +42,14 @@ Mushrooms
 Created by [SCaydi](https://opengameart.org/content/mushroom-4), hosted by OpenGameArt.org  
 Modified colors and size by Dennis Payne  
 License: CC-BY 3.0, CC-BY 4.0, GPL-3.0  
+
+### ant.png
+Ant  
+Created by Dennis Payne  
+
+### scorpion.png
+Scorpion  
+Created by Dennis Payne  
 
 ### spider.png
 Spider  
