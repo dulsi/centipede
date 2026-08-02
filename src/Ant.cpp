@@ -20,6 +20,7 @@ Ant::Ant(sf::FloatRect bounds, MushroomManager& shroomMan) : m_rng{std::random_d
     m_sprite.setTexture(TextureManager::GetTexture("graphics/ant.png"));
     m_animation = 0;
     m_sprite.setTextureRect(Ant::AntAnimationOffset[m_animation]);
+    m_health = 2;
 
     const auto& size = m_sprite.getLocalBounds().getSize();
     m_sprite.setOrigin(size.x / 2.f, size.y / 2.f);
@@ -47,6 +48,7 @@ void Ant::spawn()
     m_sprite.setPosition(m_bounds.left + (float)x, m_bounds.top);
     m_alive     = true;
     m_animation = 0;
+    m_health = 2;
     m_sprite.setTextureRect(Ant::AntAnimationOffset[m_animation]);
 }
 
@@ -109,8 +111,12 @@ bool Ant::checkLaserCollision(sf::FloatRect other)
     bool wasHit = m_alive && m_sprite.getGlobalBounds().intersects(other);
     if (wasHit)
     {
-        m_alive = false;
-        m_respawnNow = true;
+        m_health--;
+        if (m_health == 0)
+        {
+            m_alive = false;
+            m_respawnNow = true;
+        }
     }
     return wasHit;
 }

@@ -253,7 +253,10 @@ void Engine::update(const float dtSeconds)
         if (m_ant.checkLaserCollision(laser.getCollider()))
         {
             laser.deactivate();
-            m_player[laser.getPlayer()].addScore(200);
+            if (m_ant.isDead())
+            {
+                m_player[laser.getPlayer()].addScore(200);
+            }
             continue;
         }
 

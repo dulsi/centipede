@@ -83,7 +83,9 @@ class Ant : public sf::Drawable
 
     int m_animation;
 
-    /** If the scorpion is alive or note */
+    int m_health;
+
+    /** If the ant is alive or note */
     bool m_alive = true;
 
     bool m_respawnNow = false;
