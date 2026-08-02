@@ -252,7 +252,7 @@ bool Player::isDead() const
 /** Calculate the offset from center origin that the top of the laster should start from. */
 sf::Vector2f Player::getGunPosition() const
 {
-    return this->getPosition() + sf::Vector2f(0.0, this->getLocalBounds().height / 2.f);
+    return this->getPosition() - sf::Vector2f(0.0, this->getLocalBounds().height / 2.f);
 }
 
 sf::FloatRect Player::getCollider() const
