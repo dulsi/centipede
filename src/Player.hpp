@@ -93,7 +93,7 @@ class Player : public sf::Sprite
 
   private:
     /** Player movement speed in pixels/second */
-    static constexpr float Speed = 600;
+    static constexpr float Speed = 960;
 
     /** How many lives the player has at start */
     static constexpr int StartingLives = 3;
