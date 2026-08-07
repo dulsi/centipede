@@ -96,6 +96,11 @@ void Shroom::setType(int type)
     }
 }
 
+bool Shroom::isPoisoned() const
+{
+    return m_poisoned;
+}
+
 void Shroom::poison()
 {
     m_poisoned = true;

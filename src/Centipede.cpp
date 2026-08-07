@@ -197,15 +197,22 @@ void Segment::update(float deltaTime, bool updateFrame)
     // Movement while going straight
     if (m_animation == Animation::None)
     {
-        switch (m_direction)
+        if (m_poisoned)
         {
-        case Moving::Right:
-            this->move(distance, 0.0);
-            break;
-        case Moving::Left:
-            this->move(-distance, 0.0);
-            break;
-        };
+            m_animation = Animation::Start;
+        }
+        else
+        {
+            switch (m_direction)
+            {
+            case Moving::Right:
+                this->move(distance, 0.0);
+                break;
+            case Moving::Left:
+                this->move(-distance, 0.0);
+                break;
+            };
+        }
     }
 
     // Movement for the collision animation (descend one row over 4 frames)
@@ -279,6 +286,7 @@ void Segment::detectEdgeCollisions()
         if ((m_bounds.top + m_bounds.height) == (centerPos.y + width / 2))
         {
             m_descending = false;
+            m_poisoned = false;
         }
     }
     else
@@ -314,6 +322,10 @@ bool Segment::detectMushroomCollisions(const Shroom& shroom)
         // Check right side of segment with left side of mushroom
         if (shroomLeft.x - segRight.x <= spacing)
         {
+            if (shroom.isPoisoned())
+            {
+                m_poisoned = true;
+            }
             m_animation = Segment::Animation::Start;
             return true;
         }
@@ -323,6 +335,10 @@ bool Segment::detectMushroomCollisions(const Shroom& shroom)
         // Check left side of segment with right side of mushroom
         if (segLeft.x - shroomRight.x <= spacing)
         {
+            if (shroom.isPoisoned())
+            {
+                m_poisoned = true;
+            }
             m_animation = Segment::Animation::Start;
             return true;
         }

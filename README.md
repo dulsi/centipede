@@ -33,7 +33,6 @@ Big thanks to these blog posts by the RetroGame Deconstruction Zone:
 
 ## Missing Features
 - Change the laser system to that of the original game (only one laser on screen at a time)
-- Scorpion (poisons mushrooms)
 
 ## Sprite License
 

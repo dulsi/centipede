@@ -99,6 +99,7 @@ class Segment : public sf::Sprite
     sf::FloatRect m_bounds;
 
     bool m_descending = true;
+    bool m_poisoned = false;
 
     /* Marks a segment as a head type*/
     bool m_isHead = false;

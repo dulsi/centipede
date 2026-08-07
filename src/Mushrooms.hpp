@@ -47,6 +47,8 @@ class Shroom : public sf::Sprite
 
     void setType(int type);
 
+    bool isPoisoned() const;
+
     void poison();
 
   private:
