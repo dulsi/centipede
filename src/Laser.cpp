@@ -5,13 +5,7 @@ Copyright (c) 2024 Jackson Miller
 Description:
 Laser object definition. These are instantiated once at runtime,
 then activated/moved when needed.
-
-The original Centipede game only allowed one Laser on the screen at a time,
-but the requirements for this assignment specifically asked for multiple.
-
-TODO: I will probably change how this works after submitting.
 */
-#include "SFML/Graphics.hpp"
 
 #include "Laser.hpp"
 
@@ -47,20 +41,14 @@ void Laser::update(float deltaTime)
 }
 
 /** Only draw an active laser to the scene */
-void Laser::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Laser::draw(gfx::RenderTarget& target) const
 {
     if (m_active)
     {
-        target.draw(m_shape, states);
+        target.draw(m_shape);
     }
 }
 
-/**
- * Make this Laser active, and set it's position to (x,y)
- * @param x pos of start
- * @param y pos of start
- * @param player person shooting
- */
 void Laser::shoot(float x, float y, int player)
 {
     m_active = true;
@@ -69,19 +57,13 @@ void Laser::shoot(float x, float y, int player)
     m_player = player;
 }
 
-/**
- * Make this Laser active, and set it's position to `start`.
- * Overload for vector start position
- * @param start  position to start from
- * @param player person shooting
- */
-void Laser::shoot(sf::Vector2f start, int player)
+void Laser::shoot(gfx::Vector2f start, int player)
 {
     shoot(start.x, start.y, player);
 }
 
 /** Return the boundary collider of this laser object. */
-sf::FloatRect Laser::getCollider() const
+gfx::FloatRect Laser::getCollider() const
 {
     return m_shape.getGlobalBounds();
 }

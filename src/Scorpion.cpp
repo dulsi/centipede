@@ -8,14 +8,11 @@ Scorpion class definition and implementation
 
 #include <random>
 
-#include "SFML/Graphics.hpp"
-
 #include "Scorpion.hpp"
 #include "Settings.hpp"
 #include "TextureManager.hpp"
 
-/** Construction and set up the inherited Sprite properties */
-Scorpion::Scorpion(sf::FloatRect bounds) : m_rng{std::random_device{}()}
+Scorpion::Scorpion(gfx::FloatRect bounds) : m_rng{std::random_device{}()}
 {
     m_sprite.setTexture(TextureManager::GetTexture("graphics/scorpion.png"));
     m_animation = 0;
@@ -49,17 +46,16 @@ void Scorpion::spawn()
     m_sprite.setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
 }
 
-void Scorpion::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Scorpion::draw(gfx::RenderTarget& target) const
 {
     if (m_alive)
     {
-        target.draw(m_sprite, states);
+        target.draw(m_sprite);
     }
 }
 
 void Scorpion::update(float deltaTime)
 {
-    // if currently inactive, increment timer and don't move around
     if (!m_alive)
     {
         std::uniform_int_distribution<size_t> dist(0, 1000);
@@ -90,10 +86,8 @@ void Scorpion::update(float deltaTime)
     }
 }
 
-/**  */
-bool Scorpion::checkLaserCollision(sf::FloatRect other)
+bool Scorpion::checkLaserCollision(gfx::FloatRect other)
 {
-    // only living scorpions can be hit
     bool wasHit = m_alive && m_sprite.getGlobalBounds().intersects(other);
     if (wasHit)
     {
@@ -102,7 +96,7 @@ bool Scorpion::checkLaserCollision(sf::FloatRect other)
     return wasHit;
 }
 
-sf::FloatRect Scorpion::getCollider() const
+gfx::FloatRect Scorpion::getCollider() const
 {
     return m_sprite.getGlobalBounds();
 }

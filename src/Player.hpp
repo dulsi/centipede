@@ -9,20 +9,25 @@ Player character declaration.
 #pragma once
 
 #include <array>
+#include <cstdint>
+#include <chrono>
 
-#include <SFML/Graphics.hpp>
+#include "gfx/RenderWindow.hpp"
+#include "gfx/Sprite.hpp"
+#include "gfx/Input.hpp"
+#include "gfx/Types.hpp"
 
 class Engine;
 
 /**
- * The Player class inherits from SFML Sprite and implements:
- * user input, spider collisions, and keeping track of lives
+ * The Player class inherits from Sprite and implements:
+ * user input, enemy collisions, and keeping track of lives
  */
-class Player : public sf::Sprite
+class Player : public gfx::Sprite
 {
   public:
     /** Construct a new Player object */
-    Player(sf::FloatRect bounds, int number);
+    Player(gfx::FloatRect bounds, int number);
 
     // no default constructor
     Player() = delete;
@@ -41,17 +46,17 @@ class Player : public sf::Sprite
      */
     void update(float deltaTime, Engine& engine);
 
-    void drawLives(sf::RenderWindow& window) const;
+    void drawLives(gfx::RenderWindow& window) const;
 
-    void drawScore(sf::RenderWindow& window);
+    void drawScore(gfx::RenderWindow& window);
 
     /**
      * Check for collisions with enemy and decrement life counter
      * @param enemy Collider of the enemy
-     * @return true if hit by spider
+     * @return true if hit by enemy
      * @return false otherwise
      */
-    bool checkEnemyCollision(sf::FloatRect enemy);
+    bool checkEnemyCollision(gfx::FloatRect enemy);
 
     /**
      * Causes player to lose a life
@@ -74,20 +79,20 @@ class Player : public sf::Sprite
     /**
      * Return the location that the lasers should spawn from.
      *
-     * @return sf::Vector2f
+     * @return gfx::Vector2f
      */
-    sf::Vector2f getGunPosition() const;
+    gfx::Vector2f getGunPosition() const;
 
     /**
      * Get the player collider for collisions
      *
-     * @return sf::FloatRect
+     * @return gfx::FloatRect
      */
-     sf::FloatRect getCollider() const;
+     gfx::FloatRect getCollider() const;
 
      int getNumber() const;
 
-     bool shouldFire(const sf::Time& totalGameTime);
+     bool shouldFire(const std::chrono::milliseconds& totalGameTimeMs);
 
      void addScore(unsigned long points);
 
@@ -101,13 +106,13 @@ class Player : public sf::Sprite
     static constexpr int AnimationFrames = 2;
 
     /** Location of the player texture in sprite-sheet */
-    static inline const sf::IntRect PlayerAnimationOffset[2][AnimationFrames] =
+    static inline const gfx::IntRect PlayerAnimationOffset[2][AnimationFrames] =
     {
       { {16, 16, 28, 32}, {64, 16, 28, 32} },
       { {16, 64, 28, 32}, {64, 64, 28, 32} },
     };
 
-    static inline const sf::IntRect PlayerPlusOffset[2] =
+    static inline const gfx::IntRect PlayerPlusOffset[2] =
     {
       {112, 16, 28, 32},
       {112, 64, 28, 32}
@@ -120,15 +125,15 @@ class Player : public sf::Sprite
     const double m_animationDuration = 0.1;
 
     /** The bounds of player movement */
-    sf::FloatRect m_bounds;
+    gfx::FloatRect m_bounds;
 
     int m_number;
 
-    sf::Keyboard::Key m_up;
-    sf::Keyboard::Key m_down;
-    sf::Keyboard::Key m_left;
-    sf::Keyboard::Key m_right;
-    sf::Keyboard::Key m_fire;
+    gfx::Keyboard::Key m_up;
+    gfx::Keyboard::Key m_down;
+    gfx::Keyboard::Key m_left;
+    gfx::Keyboard::Key m_right;
+    gfx::Keyboard::Key m_fire;
 
     /** Up movement key is pressed */
     bool m_movingUp = false;
@@ -142,11 +147,11 @@ class Player : public sf::Sprite
     bool m_fireLaser = false;
 
     /** Time a laser was fired */
-    sf::Time m_lastFired;
+    std::chrono::milliseconds m_lastFiredMs;
 
-    std::array<sf::Sprite, 5> m_lifeSprites;
+    std::array<gfx::Sprite, 5> m_lifeSprites;
 
-    sf::Sprite m_scoreSprite;
+    gfx::Sprite m_scoreSprite;
 
     int m_animation = 0;
 

@@ -8,14 +8,11 @@ Ant class definition and implementation
 
 #include <random>
 
-#include "SFML/Graphics.hpp"
-
 #include "Ant.hpp"
 #include "Settings.hpp"
 #include "TextureManager.hpp"
 
-/** Construction and set up the inherited Sprite properties */
-Ant::Ant(sf::FloatRect bounds, MushroomManager& shroomMan) : m_rng{std::random_device{}()}, m_shroomMan{shroomMan}
+Ant::Ant(gfx::FloatRect bounds, MushroomManager& shroomMan) : m_rng{std::random_device{}()}, m_shroomMan{shroomMan}
 {
     m_sprite.setTexture(TextureManager::GetTexture("graphics/ant.png"));
     m_animation = 0;
@@ -44,7 +41,6 @@ void Ant::spawn()
 {
     std::uniform_int_distribution<size_t> dist(0, (size_t)(m_bounds.width / Game::GridSize));
     size_t x = dist(m_rng) * Game::GridSize;
-    //const auto& size = m_sprite.getLocalBounds().getSize();
     m_sprite.setPosition(m_bounds.left + (float)x, m_bounds.top);
     m_alive     = true;
     m_animation = 0;
@@ -52,17 +48,16 @@ void Ant::spawn()
     m_sprite.setTextureRect(Ant::AntAnimationOffset[m_animation]);
 }
 
-void Ant::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Ant::draw(gfx::RenderTarget& target) const
 {
     if (m_alive)
     {
-        target.draw(m_sprite, states);
+        target.draw(m_sprite);
     }
 }
 
 void Ant::update(float deltaTime)
 {
-    // if currently inactive, increment timer and don't move around
     if (!m_alive)
     {
         if ((m_shroomMan.getShrooms().size() < 25) || (m_respawnNow))
@@ -104,10 +99,8 @@ void Ant::update(float deltaTime)
     }
 }
 
-/**  */
-bool Ant::checkLaserCollision(sf::FloatRect other)
+bool Ant::checkLaserCollision(gfx::FloatRect other)
 {
-    // only living ants can be hit
     bool wasHit = m_alive && m_sprite.getGlobalBounds().intersects(other);
     if (wasHit)
     {
@@ -121,7 +114,7 @@ bool Ant::checkLaserCollision(sf::FloatRect other)
     return wasHit;
 }
 
-sf::FloatRect Ant::getCollider() const
+gfx::FloatRect Ant::getCollider() const
 {
     return m_sprite.getGlobalBounds();
 }

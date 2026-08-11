@@ -8,17 +8,16 @@ The player can move around a given bounds using the WASD or arrow keys.
 If a enemy collides with the player, a life is lost.
 */
 
-#include "SFML/Graphics.hpp"
 #include <unordered_set>
-#include <ranges>
 
 #include "Engine.hpp"
 #include "Player.hpp"
 #include "Laser.hpp"
+#include "Settings.hpp"
 #include "TextureManager.hpp"
 
 /** Constructor initializes the Sprite and other members and sets the origin to the center. */
-Player::Player(sf::FloatRect bounds, int number) : m_lastFired{sf::Time::Zero}
+Player::Player(gfx::FloatRect bounds, int number)
 {
     m_number = number;
     this->setTexture(TextureManager::GetTexture("graphics/fairy.png"));
@@ -38,7 +37,7 @@ Player::Player(sf::FloatRect bounds, int number) : m_lastFired{sf::Time::Zero}
     }
 
     m_scoreSprite.setTexture(TextureManager::GetTexture("graphics/font.png"));
-    m_scoreSprite.setTextureRect(sf::IntRect(0, 32, 32, 32));
+    m_scoreSprite.setTextureRect(gfx::IntRect(0, 32, 32, 32));
 
     // use the sprite size to center the origin
     const auto& size = this->getLocalBounds();
@@ -54,19 +53,19 @@ Player::Player(sf::FloatRect bounds, int number) : m_lastFired{sf::Time::Zero}
 
     if (number == 0)
     {
-        m_up    = sf::Keyboard::Up;
-        m_down  = sf::Keyboard::Down;
-        m_left  = sf::Keyboard::Left;
-        m_right = sf::Keyboard::Right;
-        m_fire  = sf::Keyboard::Space;
+        m_up    = gfx::Keyboard::Key::Up;
+        m_down  = gfx::Keyboard::Key::Down;
+        m_left  = gfx::Keyboard::Key::Left;
+        m_right = gfx::Keyboard::Key::Right;
+        m_fire  = gfx::Keyboard::Key::Space;
     }
     else
     {
-        m_up    = sf::Keyboard::R;
-        m_down  = sf::Keyboard::F;
-        m_left  = sf::Keyboard::D;
-        m_right = sf::Keyboard::G;
-        m_fire  = sf::Keyboard::Q;
+        m_up    = gfx::Keyboard::Key::R;
+        m_down  = gfx::Keyboard::Key::F;
+        m_left  = gfx::Keyboard::Key::D;
+        m_right = gfx::Keyboard::Key::G;
+        m_fire  = gfx::Keyboard::Key::Q;
     }
 
     // move to starting position
@@ -81,7 +80,7 @@ void Player::spawn()
     this->reset();
 }
 
-void Player::drawLives(sf::RenderWindow& window) const
+void Player::drawLives(gfx::RenderWindow& window) const
 {
     for (size_t i = 0 ; (int)(i + 1) < m_lives && i < m_lifeSprites.size(); i++)
     {
@@ -89,7 +88,7 @@ void Player::drawLives(sf::RenderWindow& window) const
     }
 }
 
-void Player::drawScore(sf::RenderWindow& window)
+void Player::drawScore(gfx::RenderWindow& window)
 {
     unsigned long value = m_score;
     bool firstDigit = true;
@@ -103,7 +102,7 @@ void Player::drawScore(sf::RenderWindow& window)
     {
         firstDigit = false;
         const int digit = static_cast<int>(value % 10);
-        m_scoreSprite.setTextureRect(sf::IntRect(digit * 32, 32, 32, 32));
+        m_scoreSprite.setTextureRect(gfx::IntRect(digit * 32, 32, 32, 32));
         m_scoreSprite.setPosition(static_cast<float>(x), 0.0f);
         window.draw(m_scoreSprite);
         value /= 10;
@@ -118,10 +117,10 @@ void Player::disable()
 
 void Player::reset()
 {
-    m_lastFired = sf::Time::Zero;
+    m_lastFiredMs = std::chrono::milliseconds::zero();
     // reset position
     const auto& size = this->getLocalBounds();
-    sf::Vector2f start{m_bounds.left + (m_bounds.width / 2) - size.width * 1.5f + size.width * (float)m_number, // center
+    gfx::Vector2f start{m_bounds.left + (m_bounds.width / 2) - size.width * 1.5f + size.width * (float)m_number, // center
                        m_bounds.top + m_bounds.height};      // bottom row
     this->setPosition(start);
 }
@@ -130,11 +129,11 @@ void Player::reset()
 void Player::handleInput()
 {
     // Can be moved with arrows or WASD
-    m_movingUp    = sf::Keyboard::isKeyPressed(m_up);
-    m_movingDown  = sf::Keyboard::isKeyPressed(m_down);
-    m_movingLeft  = sf::Keyboard::isKeyPressed(m_left);
-    m_movingRight = sf::Keyboard::isKeyPressed(m_right);
-    m_fireLaser   = sf::Keyboard::isKeyPressed(m_fire);
+    m_movingUp    = gfx::Keyboard::isKeyPressed(m_up);
+    m_movingDown  = gfx::Keyboard::isKeyPressed(m_down);
+    m_movingLeft  = gfx::Keyboard::isKeyPressed(m_left);
+    m_movingRight = gfx::Keyboard::isKeyPressed(m_right);
+    m_fireLaser   = gfx::Keyboard::isKeyPressed(m_fire);
 }
 
 /**
@@ -155,8 +154,8 @@ void Player::update(float deltaTime, Engine& engine)
     // opposite directions cancel out.
     const float distance = Player::Speed * deltaTime;
 
-    const sf::Vector2f oldPos = this->getPosition();
-    sf::Vector2f       newPos  = oldPos;
+    const gfx::Vector2f oldPos = this->getPosition();
+    gfx::Vector2f       newPos  = oldPos;
 
     if (m_movingUp)
     {
@@ -182,14 +181,13 @@ void Player::update(float deltaTime, Engine& engine)
     auto saturate = [](float v, float lo, float hi) { return v < lo ? lo : v > hi ? hi : v; };
 
     // prevent movement out of the player bounding area
-    // not using sf::Rec.contains() because of 'sticky' walls issue
     newPos.x = saturate(newPos.x, m_bounds.left, m_bounds.width + m_bounds.left);
     newPos.y = saturate(newPos.y, m_bounds.top, m_bounds.height + m_bounds.top);
 
     const float dx = newPos.x - oldPos.x;
     const float dy = newPos.y - oldPos.y;
 
-    sf::FloatRect collider = this->getGlobalBounds();
+    gfx::FloatRect collider = this->getGlobalBounds();
     collider.left += dx;
     collider.top += dy;
 
@@ -204,7 +202,7 @@ void Player::update(float deltaTime, Engine& engine)
     }
     else if (dx != 0.f && dy != 0.f)
     {
-        sf::FloatRect xRect = this->getGlobalBounds();
+        gfx::FloatRect xRect = this->getGlobalBounds();
         xRect.left += dx;
         if (!engine.CheckCollision(xRect, targets))
         {
@@ -212,7 +210,7 @@ void Player::update(float deltaTime, Engine& engine)
         }
         else
         {
-            sf::FloatRect yRect = this->getGlobalBounds();
+            gfx::FloatRect yRect = this->getGlobalBounds();
             yRect.top += dy;
             if (!engine.CheckCollision(yRect, targets))
             {
@@ -223,7 +221,7 @@ void Player::update(float deltaTime, Engine& engine)
 }
 
 /** Detect if hit by the enemy and lose a life */
-bool Player::checkEnemyCollision(sf::FloatRect enemy)
+bool Player::checkEnemyCollision(gfx::FloatRect enemy)
 {
     if (this->getGlobalBounds().intersects(enemy))
     {
@@ -250,12 +248,12 @@ bool Player::isDead() const
 }
 
 /** Calculate the offset from center origin that the top of the laster should start from. */
-sf::Vector2f Player::getGunPosition() const
+gfx::Vector2f Player::getGunPosition() const
 {
-    return this->getPosition() - sf::Vector2f(0.0, this->getLocalBounds().height / 2.f);
+    return this->getPosition() - gfx::Vector2f(0.0, this->getLocalBounds().height / 2.f);
 }
 
-sf::FloatRect Player::getCollider() const
+gfx::FloatRect Player::getCollider() const
 {
     return getGlobalBounds();
 }
@@ -265,16 +263,16 @@ int Player::getNumber() const
     return m_number;
 }
 
-bool Player::shouldFire(const sf::Time& totalGameTime)
+bool Player::shouldFire(const std::chrono::milliseconds& totalGameTimeMs)
 {
     if (m_fireLaser)
     {
-        auto elapsed = totalGameTime.asMilliseconds() - m_lastFired.asMilliseconds();
+        const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(totalGameTimeMs - m_lastFiredMs).count();
 
         // only fire after the firing period has elapsed
         if (elapsed > static_cast<int>(1000 / Laser::FireRate))
         {
-            m_lastFired = totalGameTime;
+            m_lastFiredMs = totalGameTimeMs;
             return true;
         }
     }

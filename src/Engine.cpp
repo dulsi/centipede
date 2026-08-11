@@ -6,8 +6,7 @@ Description:
 Defines the main game Engine and game loop logic.
 */
 #include <iostream>
-
-#include <SFML/Graphics.hpp>
+#include <chrono>
 
 #include "Engine.hpp"
 #include "Settings.hpp"
@@ -18,45 +17,19 @@ Defines the main game Engine and game loop logic.
  * Initializer list handles creating member objects.
  * Body sets window and view settings
  */
-Engine::Engine()
-    : texMan(),
-      m_view{Game::GameCenter, Game::GameSize},
+Engine::Engine(gfx::RenderWindow& window)
+    : m_window(window),
+      texMan(),
       m_player{{Game::PlayerArea, 0}, {Game::PlayerArea, 1}},
       m_shroomMan{Game::ShroomArea},
       m_centipede{Game::EnemyArea, m_shroomMan},
       m_ant{Game::EnemyArea, m_shroomMan},
       m_spider{Game::SpiderArea},
       m_scorpion{Game::ScorpionArea},
-      m_totalGameTime{sf::Time::Zero}
+      m_totalGameTime{std::chrono::milliseconds::zero()}
 {
-
-    // create the window at native game resolution
-    m_window.create(
-        sf::VideoMode(static_cast<unsigned>(Game::GameSize.x), static_cast<unsigned>(Game::GameSize.y)),
-        Game::Name,
-        sf::Style::Fullscreen);
-
-    // set some OS window options
-    m_window.setMouseCursorVisible(false);
-    m_window.setFramerateLimit(60); // original game was 60fps
-    m_window.setVerticalSyncEnabled(false);
-
-    // place the window in the center of the desktop
-    const auto& desktop = sf::VideoMode::getDesktopMode();
-    const auto    xpos    = (desktop.width / 2u) - (static_cast<unsigned>(Game::GameSize.x) / 2u);
-    const auto    ypos    = (desktop.height / 2u) - (static_cast<unsigned>(Game::GameSize.y) / 2u);
-    m_window.setPosition(sf::Vector2i(static_cast<int>(xpos), static_cast<int>(ypos)));
-
-    m_window.setView(m_view);
-
     // made my own startup image
     m_startSprite.setTexture(TextureManager::GetTexture("graphics/splash.png"));
-
-    // later as a HUD overlay (not submitted)
-    // m_border.setSize(Game::GameSize);
-    // m_border.setOutlineThickness(-2);
-    // m_border.setFillColor(sf::Color::Transparent);
-    // m_border.setOutlineColor(sf::Color::White);
 }
 
 /**
@@ -66,22 +39,23 @@ Engine::Engine()
 void Engine::run()
 {
     // reset the clock for first run
-    m_clock.restart();
+    m_lastTime = std::chrono::steady_clock::now();
     while (m_window.isOpen())
     {
-        const sf::Time& dt = m_clock.restart();
-        m_totalGameTime += dt;
-        m_elapsedTime += dt.asSeconds();
         constexpr float tick = 1 / 60.f;
+        const auto now = std::chrono::steady_clock::now();
+        const auto delta = now - m_lastTime;
+        if (std::chrono::duration<double>(delta).count() < tick)
+        {
+            SDL_Delay(static_cast<Uint32>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(tick - std::chrono::duration<double>(delta).count())).count()));
+        }
+        m_lastTime = std::chrono::steady_clock::now();
+        m_totalGameTime += std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<float>(tick));
 
         // only draw frames at a maximum tick rate
         input();
-        if (m_elapsedTime >= tick)
-        {
-            update(tick);
-            draw();
-            m_elapsedTime = 0;
-        }
+        update(tick);
+        draw();
     }
 }
 
@@ -93,43 +67,43 @@ void Engine::run()
 void Engine::input()
 {
     // handle event polling for some inputs (start/end, etc)
-    sf::Event event;
+    gfx::Event event;
     while (m_window.pollEvent(event))
     {
 
         // Close the window when "X" button clicked
-        if (event.type == sf::Event::Closed)
+        if (event.type == gfx::Event::Closed)
         {
             m_window.close();
         }
 
         // preserve the aspect ratio when resizing
-        if (event.type == sf::Event::Resized)
+        /*if (event.type == sf::Event::Resized)
         {
             this->setViewport(event.size.width, event.size.height);
-        }
+        }*/
 
-        if (event.type == sf::Event::KeyPressed)
+        if (event.type == gfx::Event::KeyPressed)
         {
 
             // Start game from "menu" with "ENTER"
             if (state == State::Start &&
-                (event.key.code == sf::Keyboard::Return ||
-                    event.key.code == sf::Keyboard::Space ||
-                    event.key.code == sf::Keyboard::Q ||
-                    event.key.code == sf::Keyboard::Num1 ||
-                    event.key.code == sf::Keyboard::Num2))
+                (event.key.code == gfx::Keyboard::Key::Return ||
+                    event.key.code == gfx::Keyboard::Key::Space ||
+                    event.key.code == gfx::Keyboard::Key::Q ||
+                    event.key.code == gfx::Keyboard::Key::Num1 ||
+                    event.key.code == gfx::Keyboard::Key::Num2))
             {
                 int players = 1;
 
-                if (event.key.code == sf::Keyboard::Q || event.key.code == sf::Keyboard::Num2)
+                if (event.key.code == gfx::Keyboard::Key::Q || event.key.code == gfx::Keyboard::Key::Num2)
                 {
                     players = 2;
                 }
 
                 state = State::Playing;
                 std::cout << "Started" << std::endl;
-                m_clock.restart(); // restart clock to prevent frame skip
+                //m_clock.restart(); // restart clock to prevent frame skip
                 m_shroomMan.reset();
                 m_centipede.reset();
                 for (auto& laser : m_lasers)
@@ -152,7 +126,7 @@ void Engine::input()
             }
 
             // Quit game whenever "ESC" pressed
-            if (event.key.code == sf::Keyboard::Escape)
+            if (event.key.code == gfx::Keyboard::Key::Escape)
             {
                 std::cout << "Ended" << std::endl;
                 m_window.close();
@@ -160,7 +134,7 @@ void Engine::input()
         }
     } // end event polling
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+    if (gfx::Keyboard::isKeyPressed(gfx::Keyboard::Key::Num1) && gfx::Keyboard::isKeyPressed(gfx::Keyboard::Key::Num2))
     {
         m_window.close();
     }
@@ -205,9 +179,15 @@ void Engine::update(const float dtSeconds)
         return;
     }
 
-    m_shroomMan.checkSpiderCollision(m_spider.getCollider());
+    if (!m_spider.isDead())
+    {
+        m_shroomMan.checkSpiderCollision(m_spider.getCollider());
+    }
 
-    m_shroomMan.checkScorpionCollision(m_scorpion.getCollider());
+    if (!m_scorpion.isDead())
+    {
+        m_shroomMan.checkScorpionCollision(m_scorpion.getCollider());
+    }
 
     for (auto& player : m_player)
     {
@@ -358,38 +338,7 @@ void Engine::draw()
     m_window.display();
 }
 
-/**
- * Handles resizing the SFML viewport to preserve the correct game aspect ratio
- * when the main window is resized. This prevents any distortion of the game characters,
- * while enlarging (or shrinking) uniformly.
- *
- * @param width, height new size of the main window
- */
-void Engine::setViewport(unsigned int width, unsigned int height)
-{
-    float windowRatio = static_cast<float>(width) / static_cast<float>(height);
-    float viewRatio   = m_view.getSize().x / m_view.getSize().y;
-    float sizeX       = 1;
-    float sizeY       = 1;
-    float posX        = 0;
-    float posY        = 0;
-
-    if (windowRatio > viewRatio)
-    {
-        sizeX = viewRatio / windowRatio;
-        posX  = (1 - sizeX) / 2;
-    }
-    else
-    {
-        sizeY = windowRatio / viewRatio;
-        posY  = (1 - sizeY) / 2;
-    }
-
-    m_view.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
-    m_window.setView(m_view);
-}
-
-bool Engine::CheckCollision(const sf::FloatRect& rect,
+bool Engine::CheckCollision(const gfx::FloatRect& rect,
                               const std::unordered_set<CollisionTarget>& targets) const
 {
     if (targets.count(CollisionTarget::Mushroom) != 0U)

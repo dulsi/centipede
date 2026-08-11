@@ -6,11 +6,12 @@ Copyright (c) 2024 Jackson Miller
 #include <cassert>
 #include <exception>
 
-#include "SFML/Graphics.hpp"
+#include <SDL2/SDL_image.h>
 
 #include "TextureManager.hpp"
 
 TextureManager* TextureManager::m_s_Instance = nullptr;
+SDL_Renderer*   TextureManager::m_renderer   = nullptr;
 
 /** Constructor sets up the static reference. */
 TextureManager::TextureManager() : m_texCache()
@@ -18,6 +19,17 @@ TextureManager::TextureManager() : m_texCache()
     // assert prevent's multiple TextureManagers for being created
     assert(m_s_Instance == nullptr);
     m_s_Instance = this;
+
+    const int flags = IMG_INIT_PNG;
+    if ((IMG_Init(flags) & flags) == 0)
+    {
+        throw std::runtime_error("Could not initialize SDL_image");
+    }
+}
+
+void TextureManager::SetRenderer(SDL_Renderer* renderer)
+{
+    m_renderer = renderer;
 }
 
 /**
@@ -25,9 +37,9 @@ TextureManager::TextureManager() : m_texCache()
  *
  * This is a static method that makes it easy for any code to get a texture reference.
  * @param path the texture to load
- * @return sf::Texture&
+ * @return gfx::Texture&
  */
-const sf::Texture& TextureManager::GetTexture(const char* path)
+const gfx::Texture& TextureManager::GetTexture(const char* path)
 {
     // convert to string
     std::string filename{path};
@@ -37,21 +49,26 @@ const sf::Texture& TextureManager::GetTexture(const char* path)
     // Check mapping for the filename, return value if found (C++17 init statement syntax)
     if (auto got = texture_cache.find(filename); got != texture_cache.end())
     {
-
+        if (m_renderer != nullptr)
+        {
+            got->second.getGpuTexture(m_renderer);
+        }
         return got->second;
     }
-    else
-    {
-        // File not loaded yet!
-        // Create a new key value pair using the filename
-        auto& texture = texture_cache[filename];
 
-        if (!texture.loadFromFile(filename))
-        {
-            // If file can't be found, abort
-            throw std::runtime_error("Could not load file: " + filename);
-        }
-        // texture is valid and loaded
-        return texture;
+    // File not loaded yet!
+    auto& texture = texture_cache[filename];
+
+    if (!texture.loadFromFile(filename.c_str()))
+    {
+        // If file can't be found, abort
+        throw std::runtime_error("Could not load file: " + filename);
     }
+
+    if (m_renderer != nullptr)
+    {
+        texture.getGpuTexture(m_renderer);
+    }
+
+    return texture;
 }

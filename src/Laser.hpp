@@ -9,13 +9,17 @@ I might go that route, it would simplify the fire-rate timing.
 */
 
 #pragma once
-#include <SFML/Graphics.hpp>
+
+#include "gfx/RectangleShape.hpp"
+#include "gfx/RenderTarget.hpp"
+#include "gfx/RenderWindow.hpp"
+#include "gfx/Types.hpp"
 
 /**
  * Laser objects that can be recycled throughout the scene.
  * Instances that are not `Laser::active` should not be drawn or updated.
  */
-class Laser : public sf::Drawable
+class Laser
 {
   public:
     /** Fire-rate of all Laser instances (shots/second) */
@@ -32,11 +36,7 @@ class Laser : public sf::Drawable
      */
     void update(float deltaTime);
 
-    /**
-     * Draw to the target
-     * Implements sf::Drawable.draw
-     */
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    void draw(gfx::RenderTarget& target) const;
 
     /**
      * Make this Laser active, and set it's position to (x,y)
@@ -51,15 +51,15 @@ class Laser : public sf::Drawable
      * @param start vector position to start from
      * @param player person shooting
      */
-    void shoot(sf::Vector2f, int player);
+    void shoot(gfx::Vector2f start, int player);
 
     /**
      * Get the boundary collider for this laser.
      * For use with collision detection
      *
-     * @return sf::FloatRect global bounds rectangle of the laser
+     * @return gfx::FloatRect global bounds rectangle of the laser
      */
-    sf::FloatRect getCollider() const;
+    gfx::FloatRect getCollider() const;
 
     /** Change the state of this laser to in-active */
     void deactivate();
@@ -70,22 +70,20 @@ class Laser : public sf::Drawable
     int getPlayer() const;
 
   private:
-    // Static properties common to all lasers
-
     /** Laser speed in px/second. Original game had 7px per frame (60fps). */
     static constexpr float Speed = 28 * 60;
 
     /** Color of all lasers (Red) */
-    static inline const sf::Color Color = sf::Color::Red;
+    static inline const gfx::Color Color = gfx::Color::Red;
 
     /** Size of all lasers (px) */
-    static inline const sf::Vector2f Size{4.0, 24.0};
+    static inline const gfx::Vector2f Size{4.0, 24.0};
 
     /** Only draw active lasers. */
     bool m_active = false;
 
     /** Shape of the laser (rectangle) */
-    sf::RectangleShape m_shape;
+    gfx::RectangleShape m_shape;
 
     int m_player = 0;
 };

@@ -9,8 +9,10 @@ Declare the Game Engine. Engine::run() is the main entrypoint into the game.
 #pragma once
 #include <array>
 #include <unordered_set>
+#include <chrono>
 
-#include "SFML/Graphics.hpp"
+#include "gfx/RenderWindow.hpp"
+#include "gfx/Types.hpp"
 
 #include "Ant.hpp"
 #include "Centipede.hpp"
@@ -33,7 +35,7 @@ class Engine
 {
   public:
     /** Construct a new Engine object */
-    Engine();
+    Engine(gfx::RenderWindow& window);
     /** Create a window and run the entire game loop */
     void run();
 
@@ -50,23 +52,23 @@ class Engine
      * @param targets Which object types to check against
      * @return true if any target intersects rect
      */
-    bool CheckCollision(const sf::FloatRect& rect,
+    bool CheckCollision(const gfx::FloatRect& rect,
                         const std::unordered_set<CollisionTarget>& targets) const;
 
   private:
     /** Color for the game world background */
-    static inline const sf::Color WorldColor = sf::Color::Black;
+    static inline const gfx::Color WorldColor = gfx::Color::Black;
+
+    /** The game RenderWindow */
+    gfx::RenderWindow& m_window;
 
     /** A cache for all textures used on game sprites.
      * default constructor sets up a static pointer to the only instance.
      */
     const TextureManager texMan;
 
-    /** The game RenderWindow */
-    sf::RenderWindow m_window;
-
     /** The game view, sized to match Game::GameSize */
-    sf::View m_view;
+    //sf::View m_view;
 
     /** The player-controlled starship */
     Player m_player[2];
@@ -92,22 +94,13 @@ class Engine
     size_t m_currentLaser = 0;
 
     /** Start/Game over screen sprite */
-    sf::Sprite m_startSprite;
-
-    /** Visual border for the edge of the game */
-    sf::RectangleShape m_border;
+    gfx::Sprite m_startSprite;
 
     /** Game state machine */
     State state = State::Start;
 
-    /** Main game clock */
-    sf::Clock m_clock;
-
-    /** Elapsed game time */
-    sf::Time m_totalGameTime;
-
-    /** Elapsed game time */
-    double m_elapsedTime = 0;
+    std::chrono::steady_clock::time_point m_lastTime;
+    std::chrono::milliseconds m_totalGameTime = std::chrono::milliseconds::zero();
 
     /** Poll player input and hand-off to objects */
     void input();
@@ -117,9 +110,4 @@ class Engine
 
     /** Draw all objects the the frame-buffer */
     void draw();
-
-    /** Resize the viewport to preserve the game aspect ratio when the window is resized
-     * @param width, height new size of the main window
-     */
-    void setViewport(unsigned int width, unsigned int height);
 };

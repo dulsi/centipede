@@ -6,8 +6,12 @@ Copyright (c) 2024 Jackson Miller
 #pragma once
 
 #include <unordered_map>
+#include <string>
+#include <stdexcept>
 
-#include "SFML/Graphics.hpp"
+#include "gfx/Texture.hpp"
+
+struct SDL_Renderer;
 
 /**
  * Central cache of textures.
@@ -24,9 +28,9 @@ class TextureManager
     static TextureManager* m_s_Instance;
 
     /** Mapping of filenames to Texture objects */
-    std::unordered_map<std::string, sf::Texture> m_texCache;
+    std::unordered_map<std::string, gfx::Texture> m_texCache;
 
-    // const sf::Image m_spriteSheet;
+    static SDL_Renderer* m_renderer;
 
   public:
     /**
@@ -35,12 +39,14 @@ class TextureManager
      */
     TextureManager();
 
+    static void SetRenderer(SDL_Renderer* renderer);
+
     /**
      * @brief Return a texture reference, loading it from a file if necessary
      *
      * This is a static method that makes it easy for any code to get a texture reference.
      * @param filename the texture to load
-     * @return sf::Texture&
+     * @return gfx::Texture&
      */
-    static const sf::Texture& GetTexture(const char* path);
+    static const gfx::Texture& GetTexture(const char* path);
 };

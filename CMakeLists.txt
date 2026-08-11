@@ -21,9 +21,25 @@ add_executable(${PROJECT_NAME}
                 src/Ant.cpp
                 src/Scorpion.cpp
                 src/Spider.cpp
-                src/Centipede.cpp)
+                src/Centipede.cpp
+                src/gfx/Input.cpp
+                src/gfx/RectangleShape.cpp
+                src/gfx/RenderWindow.cpp
+                src/gfx/Sprite.cpp
+                src/gfx/Texture.cpp)
 
-target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-audio sfml-window sfml-system)
+INCLUDE(FindPkgConfig)
+
+#Find the required libraries.
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+PKG_SEARCH_MODULE(SDL2_IMAGE REQUIRED SDL2_image)
+
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+        ${SDL2_LIBRARIES}
+        ${SDL2_IMAGE_LIBRARIES}
+        ${SDL2MAIN_LIBRARIES}
+)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 # Enable warning and errors
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wsign-conversion -Wconversion -Wextra -Werror -pedantic -pedantic-errors)
