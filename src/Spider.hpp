@@ -15,7 +15,7 @@ If the player hits the spider, a life is lost and the player is reset.
 #include "gfx/Sprite.hpp"
 #include "gfx/Types.hpp"
 
-class Spider
+class Spider : public gfx::Sprite
 {
   public:
     Spider(gfx::FloatRect bounds);
@@ -45,7 +45,6 @@ class Spider
     const double m_animationDuration = 0.05;
     const double m_respawnDuration = 5;
 
-    gfx::Sprite m_sprite;
     gfx::FloatRect m_bounds;
     std::mt19937 m_rng;
 

@@ -19,7 +19,7 @@ I might go that route, it would simplify the fire-rate timing.
  * Laser objects that can be recycled throughout the scene.
  * Instances that are not `Laser::active` should not be drawn or updated.
  */
-class Laser
+class Laser : public gfx::RectangleShape
 {
   public:
     /** Fire-rate of all Laser instances (shots/second) */
@@ -81,9 +81,6 @@ class Laser
 
     /** Only draw active lasers. */
     bool m_active = false;
-
-    /** Shape of the laser (rectangle) */
-    gfx::RectangleShape m_shape;
 
     int m_player = 0;
 };

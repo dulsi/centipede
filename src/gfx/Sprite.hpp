@@ -31,7 +31,7 @@ class Sprite
     [[nodiscard]] FloatRect getLocalBounds() const;
     [[nodiscard]] FloatRect getGlobalBounds() const;
 
-    void draw(RenderTarget& target) const;
+    virtual void draw(RenderTarget& target) const;
 
   private:
     const Texture* m_texture     = nullptr;

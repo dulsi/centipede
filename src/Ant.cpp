@@ -14,13 +14,13 @@ Ant class definition and implementation
 
 Ant::Ant(gfx::FloatRect bounds, MushroomManager& shroomMan) : m_rng{std::random_device{}()}, m_shroomMan{shroomMan}
 {
-    m_sprite.setTexture(TextureManager::GetTexture("graphics/ant.png"));
+    setTexture(TextureManager::GetTexture("graphics/ant.png"));
     m_animation = 0;
-    m_sprite.setTextureRect(Ant::AntAnimationOffset[m_animation]);
+    setTextureRect(Ant::AntAnimationOffset[m_animation]);
     m_health = 2;
 
-    const auto& size = m_sprite.getLocalBounds().getSize();
-    m_sprite.setOrigin(size.x / 2.f, size.y / 2.f);
+    const auto& size = getLocalBounds().getSize();
+    setOrigin(size.x / 2.f, size.y / 2.f);
 
     bounds.left += size.x / 2.f;
     bounds.top += size.y / 2.f;
@@ -41,18 +41,18 @@ void Ant::spawn()
 {
     std::uniform_int_distribution<size_t> dist(0, (size_t)(m_bounds.width / Game::GridSize));
     size_t x = dist(m_rng) * Game::GridSize;
-    m_sprite.setPosition(m_bounds.left + (float)x, m_bounds.top);
+    setPosition(m_bounds.left + (float)x, m_bounds.top);
     m_alive     = true;
     m_animation = 0;
     m_health = 2;
-    m_sprite.setTextureRect(Ant::AntAnimationOffset[m_animation]);
+    setTextureRect(Ant::AntAnimationOffset[m_animation]);
 }
 
 void Ant::draw(gfx::RenderTarget& target) const
 {
     if (m_alive)
     {
-        target.draw(m_sprite);
+        gfx::Sprite::draw(target);
     }
 }
 
@@ -69,7 +69,7 @@ void Ant::update(float deltaTime)
     }
 
     float distance = Ant::Speed * deltaTime;
-    m_sprite.move(0.0, distance);
+    move(0.0, distance);
 
     m_moveTimer += deltaTime;
     m_animationTimer += deltaTime;
@@ -77,22 +77,22 @@ void Ant::update(float deltaTime)
     {
         m_animation++;
         m_animation %= AnimationFrames;
-        m_sprite.setTextureRect(Ant::AntAnimationOffset[m_animation]);
+        setTextureRect(Ant::AntAnimationOffset[m_animation]);
         m_animationTimer = 0;
     }
 
-    const auto& size = m_sprite.getLocalBounds().getSize();
-    if (m_sprite.getPosition().y > m_bounds.top + m_bounds.height + size.x / 2.f)
+    const auto& size = getLocalBounds().getSize();
+    if (getPosition().y > m_bounds.top + m_bounds.height + size.x / 2.f)
     {
         m_alive = false;
     }
-    else if ((int)(m_sprite.getPosition().y) % Game::GridSize < 5)
+    else if ((int)(getPosition().y) % Game::GridSize < 5)
     {
         std::uniform_int_distribution<int> dist(0, 100);
         int roll = dist(m_rng);
         if (m_mushroomChance >= roll)
         {
-            auto where = m_sprite.getPosition();
+            auto where = getPosition();
             where.y = (float)(((int)where.y / Game::GridSize) * Game::GridSize) + Game::GridSize / 2.f;
             m_shroomMan.addMushroom(where);
         }
@@ -101,7 +101,7 @@ void Ant::update(float deltaTime)
 
 bool Ant::checkLaserCollision(gfx::FloatRect other)
 {
-    bool wasHit = m_alive && m_sprite.getGlobalBounds().intersects(other);
+    bool wasHit = m_alive && getGlobalBounds().intersects(other);
     if (wasHit)
     {
         m_health--;
@@ -116,7 +116,7 @@ bool Ant::checkLaserCollision(gfx::FloatRect other)
 
 gfx::FloatRect Ant::getCollider() const
 {
-    return m_sprite.getGlobalBounds();
+    return getGlobalBounds();
 }
 
 bool Ant::isDead() const

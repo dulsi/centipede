@@ -14,12 +14,12 @@ Scorpion class definition and implementation
 
 Scorpion::Scorpion(gfx::FloatRect bounds) : m_rng{std::random_device{}()}
 {
-    m_sprite.setTexture(TextureManager::GetTexture("graphics/scorpion.png"));
+    setTexture(TextureManager::GetTexture("graphics/scorpion.png"));
     m_animation = 0;
-    m_sprite.setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
+    setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
 
-    const auto& size = m_sprite.getLocalBounds().getSize();
-    m_sprite.setOrigin(size.x / 2.f, size.y / 2.f);
+    const auto& size = getLocalBounds().getSize();
+    setOrigin(size.x / 2.f, size.y / 2.f);
 
     bounds.left += size.x / 2.f;
     bounds.top += size.y / 2.f;
@@ -40,17 +40,17 @@ void Scorpion::spawn()
 {
     std::uniform_int_distribution<size_t> dist(0, (size_t)(m_bounds.height / Game::GridSize));
     size_t y = dist(m_rng) * Game::GridSize;
-    m_sprite.setPosition(m_bounds.left + m_bounds.width, m_bounds.top + (float)y);
+    setPosition(m_bounds.left + m_bounds.width, m_bounds.top + (float)y);
     m_alive     = true;
     m_animation = 0;
-    m_sprite.setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
+    setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
 }
 
 void Scorpion::draw(gfx::RenderTarget& target) const
 {
     if (m_alive)
     {
-        target.draw(m_sprite);
+        gfx::Sprite::draw(target);
     }
 }
 
@@ -67,7 +67,7 @@ void Scorpion::update(float deltaTime)
     }
 
     float distance = Scorpion::Speed * deltaTime;
-    m_sprite.move(-distance, 0.0);
+    move(-distance, 0.0);
 
     m_moveTimer += deltaTime;
     m_animationTimer += deltaTime;
@@ -75,12 +75,12 @@ void Scorpion::update(float deltaTime)
     {
         m_animation++;
         m_animation %= AnimationFrames;
-        m_sprite.setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
+        setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
         m_animationTimer = 0;
     }
 
-    const auto& size = m_sprite.getLocalBounds().getSize();
-    if (m_sprite.getPosition().x < m_bounds.left - size.x / 2.f)
+    const auto& size = getLocalBounds().getSize();
+    if (getPosition().x < m_bounds.left - size.x / 2.f)
     {
         m_alive = false;
     }
@@ -88,7 +88,7 @@ void Scorpion::update(float deltaTime)
 
 bool Scorpion::checkLaserCollision(gfx::FloatRect other)
 {
-    bool wasHit = m_alive && m_sprite.getGlobalBounds().intersects(other);
+    bool wasHit = m_alive && getGlobalBounds().intersects(other);
     if (wasHit)
     {
         m_alive = false;
@@ -98,7 +98,7 @@ bool Scorpion::checkLaserCollision(gfx::FloatRect other)
 
 gfx::FloatRect Scorpion::getCollider() const
 {
-    return m_sprite.getGlobalBounds();
+    return getGlobalBounds();
 }
 
 bool Scorpion::isDead() const

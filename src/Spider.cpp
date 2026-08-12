@@ -14,12 +14,12 @@ Spider class definition and implementation
 
 Spider::Spider(gfx::FloatRect bounds) : m_rng{std::random_device{}()}
 {
-    m_sprite.setTexture(TextureManager::GetTexture("graphics/spider.png"));
+    setTexture(TextureManager::GetTexture("graphics/spider.png"));
     m_animation = 0;
-    m_sprite.setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
+    setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
 
-    const auto& size = m_sprite.getLocalBounds().getSize();
-    m_sprite.setOrigin(size.x / 2.f, size.y / 2.f);
+    const auto& size = getLocalBounds().getSize();
+    setOrigin(size.x / 2.f, size.y / 2.f);
 
     bounds.left += size.x / 2.f;
     bounds.top += size.y / 2.f;
@@ -38,19 +38,19 @@ void Spider::reset()
 
 void Spider::spawn()
 {
-    m_sprite.setPosition(m_bounds.left, m_bounds.top);
+    setPosition(m_bounds.left, m_bounds.top);
     m_direction = Moving::UpRight;
     m_alive     = true;
     m_moveLeft = false;
     m_animation = 0;
-    m_sprite.setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
+    setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
 }
 
 void Spider::draw(gfx::RenderTarget& target) const
 {
     if (m_alive)
     {
-        target.draw(m_sprite);
+        gfx::Sprite::draw(target);
     }
 }
 
@@ -71,22 +71,22 @@ void Spider::update(float deltaTime)
     switch (m_direction)
     {
     case Moving::Up:
-        m_sprite.move(0.0, -distance);
+        move(0.0, -distance);
         break;
     case Moving::Down:
-        m_sprite.move(0.0, distance);
+        move(0.0, distance);
         break;
     case Moving::DownLeft:
-        m_sprite.move(-distance, distance);
+        move(-distance, distance);
         break;
     case Moving::DownRight:
-        m_sprite.move(distance, distance);
+        move(distance, distance);
         break;
     case Moving::UpLeft:
-        m_sprite.move(-distance, -distance);
+        move(-distance, -distance);
         break;
     case Moving::UpRight:
-        m_sprite.move(distance, -distance);
+        move(distance, -distance);
         break;
     }
 
@@ -96,17 +96,17 @@ void Spider::update(float deltaTime)
     {
         m_animation++;
         m_animation %= AnimationFrames;
-        m_sprite.setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
+        setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
         m_animationTimer = 0;
     }
     if (m_moveTimer >= m_moveDuration)
     {
         std::vector<Moving> allowedDirections;
-        if (m_sprite.getPosition().x >= m_bounds.left + m_bounds.width)
+        if (getPosition().x >= m_bounds.left + m_bounds.width)
         {
             m_moveLeft = true;
         }
-        else if (m_sprite.getPosition().x < m_bounds.left)
+        else if (getPosition().x < m_bounds.left)
         {
             m_moveLeft = false;
         }
@@ -146,7 +146,7 @@ void Spider::update(float deltaTime)
         m_moveTimer = 0;
     }
 
-    if (m_sprite.getPosition().y < m_bounds.top)
+    if (getPosition().y < m_bounds.top)
     {
         switch (m_direction)
         {
@@ -163,7 +163,7 @@ void Spider::update(float deltaTime)
             break;
         }
     }
-    else if (m_sprite.getPosition().y >= m_bounds.top + m_bounds.height)
+    else if (getPosition().y >= m_bounds.top + m_bounds.height)
     {
         switch (m_direction)
         {
@@ -184,7 +184,7 @@ void Spider::update(float deltaTime)
 
 bool Spider::checkLaserCollision(gfx::FloatRect other)
 {
-    bool wasHit = m_alive && m_sprite.getGlobalBounds().intersects(other);
+    bool wasHit = m_alive && getGlobalBounds().intersects(other);
     if (wasHit)
     {
         m_alive = false;
@@ -194,7 +194,7 @@ bool Spider::checkLaserCollision(gfx::FloatRect other)
 
 gfx::FloatRect Spider::getCollider() const
 {
-    return m_sprite.getGlobalBounds();
+    return getGlobalBounds();
 }
 
 bool Spider::isDead() const

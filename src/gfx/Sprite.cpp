@@ -105,7 +105,52 @@ FloatRect Sprite::getGlobalBounds() const
 
 void Sprite::draw(RenderTarget& target) const
 {
-    target.draw(*this);
+    if (getTexture() == nullptr)
+    {
+        return;
+    }
+
+    SDL_Texture* texture = const_cast<Texture*>(getTexture())->getGpuTexture(target.getRenderer());
+    if (texture == nullptr)
+    {
+        return;
+    }
+
+    const IntRect  sourceRect = getTextureRect();
+    const Vector2f scale      = getScale();
+    const Vector2f position   = getPosition();
+    const Vector2f origin     = getOrigin();
+
+    const float absScaleX = std::fabs(scale.x);
+    const float absScaleY = std::fabs(scale.y);
+    const float destW     = static_cast<float>(sourceRect.width) * absScaleX;
+    const float destH     = static_cast<float>(sourceRect.height) * absScaleY;
+
+    const SDL_Rect src{
+        sourceRect.left,
+        sourceRect.top,
+        sourceRect.width,
+        sourceRect.height,
+    };
+
+    const SDL_FRect dst{
+        position.x - (origin.x * absScaleX),
+        position.y - (origin.y * absScaleY),
+        destW,
+        destH,
+    };
+
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    if (scale.x < 0.f)
+    {
+        flip = static_cast<SDL_RendererFlip>(flip | SDL_FLIP_HORIZONTAL);
+    }
+    if (scale.y < 0.f)
+    {
+        flip = static_cast<SDL_RendererFlip>(flip | SDL_FLIP_VERTICAL);
+    }
+
+    SDL_RenderCopyExF(target.getRenderer(), texture, &src, &dst, 0.0, nullptr, flip);
 }
 
 } // namespace gfx

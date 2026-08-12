@@ -14,7 +14,7 @@ The scorpion class moves across the field poisoning mushrooms.
 #include "gfx/Sprite.hpp"
 #include "gfx/Types.hpp"
 
-class Scorpion
+class Scorpion : public gfx::Sprite
 {
   public:
     Scorpion(gfx::FloatRect bounds);
@@ -42,7 +42,6 @@ class Scorpion
     const double m_respawnDuration = 5;
     const size_t m_spawnChance = 5;
 
-    gfx::Sprite m_sprite;
     gfx::FloatRect m_bounds;
     std::mt19937 m_rng;
 

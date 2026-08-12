@@ -57,7 +57,11 @@ FloatRect RectangleShape::getGlobalBounds() const
 
 void RectangleShape::draw(RenderTarget& target) const
 {
-    target.draw(*this);
+    const FloatRect bounds = getGlobalBounds();
+    const SDL_FRect rect{bounds.left, bounds.top, bounds.width, bounds.height};
+    const Color     color = getFillColor();
+    SDL_SetRenderDrawColor(target.getRenderer(), color.r, color.g, color.b, color.a);
+    SDL_RenderFillRectF(target.getRenderer(), &rect);
 }
 
 } // namespace gfx

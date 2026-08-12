@@ -16,7 +16,7 @@ The ant class moves down making mushrooms.
 
 #include "Mushrooms.hpp"
 
-class Ant
+class Ant : public gfx::Sprite
 {
   public:
     Ant(gfx::FloatRect bounds, MushroomManager& shroomMan);
@@ -44,7 +44,6 @@ class Ant
     const int m_mushroomChance = 30;
     const size_t m_spawnChance = 5;
 
-    gfx::Sprite m_sprite;
     gfx::FloatRect m_bounds;
     std::mt19937 m_rng;
     MushroomManager& m_shroomMan;

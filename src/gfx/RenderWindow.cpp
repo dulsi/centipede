@@ -5,12 +5,8 @@ Copyright (c) 2024 Jackson Miller
 
 #include "RenderWindow.hpp"
 
-#include "../Ant.hpp"
 #include "../Centipede.hpp"
-#include "../Laser.hpp"
 #include "../Mushrooms.hpp"
-#include "../Scorpion.hpp"
-#include "../Spider.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -106,52 +102,11 @@ SDL_Renderer* RenderWindow::getRenderer() const
 
 void RenderWindow::draw(const Sprite& sprite)
 {
-    if (m_renderer == nullptr || sprite.getTexture() == nullptr)
+    if (m_renderer == nullptr)
     {
         return;
     }
-
-    SDL_Texture* texture = const_cast<Texture*>(sprite.getTexture())->getGpuTexture(m_renderer);
-    if (texture == nullptr)
-    {
-        return;
-    }
-
-    const IntRect  sourceRect = sprite.getTextureRect();
-    const Vector2f scale      = sprite.getScale();
-    const Vector2f position   = sprite.getPosition();
-    const Vector2f origin     = sprite.getOrigin();
-
-    const float absScaleX = std::fabs(scale.x);
-    const float absScaleY = std::fabs(scale.y);
-    const float destW     = static_cast<float>(sourceRect.width) * absScaleX;
-    const float destH     = static_cast<float>(sourceRect.height) * absScaleY;
-
-    const SDL_Rect src{
-        sourceRect.left,
-        sourceRect.top,
-        sourceRect.width,
-        sourceRect.height,
-    };
-
-    const SDL_FRect dst{
-        position.x - (origin.x * absScaleX),
-        position.y - (origin.y * absScaleY),
-        destW,
-        destH,
-    };
-
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
-    if (scale.x < 0.f)
-    {
-        flip = static_cast<SDL_RendererFlip>(flip | SDL_FLIP_HORIZONTAL);
-    }
-    if (scale.y < 0.f)
-    {
-        flip = static_cast<SDL_RendererFlip>(flip | SDL_FLIP_VERTICAL);
-    }
-
-    SDL_RenderCopyExF(m_renderer, texture, &src, &dst, 0.0, nullptr, flip);
+    sprite.draw(*this);
 }
 
 void RenderWindow::draw(const RectangleShape& shape)
@@ -160,12 +115,7 @@ void RenderWindow::draw(const RectangleShape& shape)
     {
         return;
     }
-
-    const FloatRect bounds = shape.getGlobalBounds();
-    const SDL_FRect rect{bounds.left, bounds.top, bounds.width, bounds.height};
-    const Color     color = shape.getFillColor();
-    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-    SDL_RenderFillRectF(m_renderer, &rect);
+    shape.draw(*this);
 }
 
 void RenderWindow::draw(const MushroomManager& manager)
@@ -176,26 +126,6 @@ void RenderWindow::draw(const MushroomManager& manager)
 void RenderWindow::draw(const Centipede& centipede)
 {
     centipede.draw(*this);
-}
-
-void RenderWindow::draw(const Spider& spider)
-{
-    spider.draw(*this);
-}
-
-void RenderWindow::draw(const Scorpion& scorpion)
-{
-    scorpion.draw(*this);
-}
-
-void RenderWindow::draw(const Ant& ant)
-{
-    ant.draw(*this);
-}
-
-void RenderWindow::draw(const Laser& laser)
-{
-    laser.draw(*this);
 }
 
 } // namespace gfx

@@ -25,7 +25,7 @@ class RectangleShape
     [[nodiscard]] Color getFillColor() const;
     [[nodiscard]] FloatRect getGlobalBounds() const;
 
-    void draw(RenderTarget& target) const;
+    virtual void draw(RenderTarget& target) const;
 
   private:
     Vector2f  m_size;

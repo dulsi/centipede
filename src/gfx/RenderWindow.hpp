@@ -14,12 +14,8 @@ Copyright (c) 2024 Jackson Miller
 struct SDL_Renderer;
 struct SDL_Window;
 
-class Ant;
 class Centipede;
-class Laser;
 class MushroomManager;
-class Scorpion;
-class Spider;
 
 namespace gfx
 {
@@ -46,10 +42,6 @@ class RenderWindow
     void draw(const RectangleShape& shape);
     void draw(const MushroomManager& manager);
     void draw(const Centipede& centipede);
-    void draw(const Spider& spider);
-    void draw(const Scorpion& scorpion);
-    void draw(const Ant& ant);
-    void draw(const Laser& laser);
 
   private:
     SDL_Window*   m_window   = nullptr;
