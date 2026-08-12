@@ -330,8 +330,8 @@ void Engine::draw()
             {
                 m_window.draw(player);
                 player.drawLives(m_window);
-                player.drawScore(m_window);
             }
+            player.drawScore(m_window);
         }
     }
 

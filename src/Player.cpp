@@ -113,6 +113,7 @@ void Player::drawScore(gfx::RenderWindow& window)
 void Player::disable()
 {
     m_lives = 0;
+    m_score = 0;
 }
 
 void Player::reset()
