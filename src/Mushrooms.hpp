@@ -11,7 +11,7 @@ It creates a collection of Shroom objects, and handles their state throughout th
 #include <list>
 #include <random>
 
-#include "gfx/RenderTarget.hpp"
+#include "gfx/Drawable.hpp"
 #include "gfx/RenderWindow.hpp"
 #include "gfx/Sprite.hpp"
 #include "gfx/Types.hpp"
@@ -58,13 +58,13 @@ class Shroom : public gfx::Sprite
     int m_health = 4;
 };
 
-class MushroomManager
+class MushroomManager : public gfx::Drawable
 {
   public:
     MushroomManager(gfx::FloatRect bounds);
     MushroomManager() = delete;
 
-    void draw(gfx::RenderTarget& target) const;
+    void draw(SDL_Renderer* target) const;
 
     void addMushroom(gfx::Vector2f location);
 

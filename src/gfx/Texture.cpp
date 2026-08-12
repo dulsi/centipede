@@ -1,6 +1,6 @@
 /*
 SPDX-License-Identifier: BSD-3-Clause
-Copyright (c) 2024 Jackson Miller
+Copyright (c) 2026 Dennis Payne
 */
 
 #include "Texture.hpp"

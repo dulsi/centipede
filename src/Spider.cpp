@@ -46,7 +46,7 @@ void Spider::spawn()
     setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
 }
 
-void Spider::draw(gfx::RenderTarget& target) const
+void Spider::draw(SDL_Renderer* target) const
 {
     if (m_alive)
     {

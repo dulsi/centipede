@@ -35,20 +35,20 @@ void Centipede::update(float deltaTime)
     }
 }
 
-void Centipede::draw(gfx::RenderTarget& target) const
+void Centipede::draw(SDL_Renderer* target) const
 {
     for (const auto& seg : m_segments)
     {
         if (!seg.isHead())
         {
-            target.draw(seg);
+            seg.draw(target);
         }
     }
     for (const auto& seg : m_segments)
     {
         if (seg.isHead())
         {
-            target.draw(seg);
+            seg.draw(target);
         }
     }
 }

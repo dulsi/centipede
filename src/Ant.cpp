@@ -48,7 +48,7 @@ void Ant::spawn()
     setTextureRect(Ant::AntAnimationOffset[m_animation]);
 }
 
-void Ant::draw(gfx::RenderTarget& target) const
+void Ant::draw(SDL_Renderer* target) const
 {
     if (m_alive)
     {

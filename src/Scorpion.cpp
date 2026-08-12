@@ -46,7 +46,7 @@ void Scorpion::spawn()
     setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
 }
 
-void Scorpion::draw(gfx::RenderTarget& target) const
+void Scorpion::draw(SDL_Renderer* target) const
 {
     if (m_alive)
     {

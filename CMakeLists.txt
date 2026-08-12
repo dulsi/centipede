@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
                 src/Scorpion.cpp
                 src/Spider.cpp
                 src/Centipede.cpp
+                src/gfx/Drawable.cpp
                 src/gfx/Input.cpp
                 src/gfx/RectangleShape.cpp
                 src/gfx/RenderWindow.cpp

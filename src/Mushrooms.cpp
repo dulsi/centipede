@@ -108,11 +108,11 @@ const std::list<Shroom>& MushroomManager::getShrooms() const
     return m_shrooms;
 }
 
-void MushroomManager::draw(gfx::RenderTarget& target) const
+void MushroomManager::draw(SDL_Renderer* target) const
 {
     for (const auto& shroom : m_shrooms)
     {
-        target.draw(shroom);
+        shroom.draw(target);
     }
 }
 

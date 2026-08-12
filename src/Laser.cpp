@@ -41,7 +41,7 @@ void Laser::update(float deltaTime)
 }
 
 /** Only draw an active laser to the scene */
-void Laser::draw(gfx::RenderTarget& target) const
+void Laser::draw(SDL_Renderer* target) const
 {
     if (m_active)
     {

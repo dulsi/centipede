@@ -11,7 +11,6 @@ I might go that route, it would simplify the fire-rate timing.
 #pragma once
 
 #include "gfx/RectangleShape.hpp"
-#include "gfx/RenderTarget.hpp"
 #include "gfx/RenderWindow.hpp"
 #include "gfx/Types.hpp"
 
@@ -36,7 +35,7 @@ class Laser : public gfx::RectangleShape
      */
     void update(float deltaTime);
 
-    void draw(gfx::RenderTarget& target) const;
+    void draw(SDL_Renderer* target) const;
 
     /**
      * Make this Laser active, and set it's position to (x,y)

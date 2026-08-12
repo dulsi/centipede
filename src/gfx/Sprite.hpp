@@ -1,18 +1,18 @@
 /*
 SPDX-License-Identifier: BSD-3-Clause
-Copyright (c) 2024 Jackson Miller
+Copyright (c) 2026 Dennis Payne
 */
 
 #pragma once
 
-#include "RenderTarget.hpp"
+#include "Drawable.hpp"
 #include "Texture.hpp"
 #include "Types.hpp"
 
 namespace gfx
 {
 
-class Sprite
+class Sprite : public Drawable
 {
   public:
     void setTexture(const Texture& texture);
@@ -31,7 +31,7 @@ class Sprite
     [[nodiscard]] FloatRect getLocalBounds() const;
     [[nodiscard]] FloatRect getGlobalBounds() const;
 
-    virtual void draw(RenderTarget& target) const;
+    void draw(SDL_Renderer* target) const;
 
   private:
     const Texture* m_texture     = nullptr;

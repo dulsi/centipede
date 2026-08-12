@@ -1,6 +1,6 @@
 /*
 SPDX-License-Identifier: BSD-3-Clause
-Copyright (c) 2024 Jackson Miller
+Copyright (c) 2026 Dennis Payne
 */
 
 #include "RectangleShape.hpp"
@@ -55,13 +55,13 @@ FloatRect RectangleShape::getGlobalBounds() const
     return FloatRect{left, top, m_size.x, m_size.y};
 }
 
-void RectangleShape::draw(RenderTarget& target) const
+void RectangleShape::draw(SDL_Renderer* target) const
 {
     const FloatRect bounds = getGlobalBounds();
     const SDL_FRect rect{bounds.left, bounds.top, bounds.width, bounds.height};
     const Color     color = getFillColor();
-    SDL_SetRenderDrawColor(target.getRenderer(), color.r, color.g, color.b, color.a);
-    SDL_RenderFillRectF(target.getRenderer(), &rect);
+    SDL_SetRenderDrawColor(target, color.r, color.g, color.b, color.a);
+    SDL_RenderFillRectF(target, &rect);
 }
 
 } // namespace gfx

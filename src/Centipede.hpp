@@ -10,7 +10,7 @@ Multiple Centipedes may be present in the game area with different segment lengt
 #pragma once
 #include <list>
 
-#include "gfx/RenderTarget.hpp"
+#include "gfx/Drawable.hpp"
 #include "gfx/RenderWindow.hpp"
 #include "gfx/Sprite.hpp"
 #include "gfx/Types.hpp"
@@ -62,7 +62,7 @@ class Segment : public gfx::Sprite
     int m_animationFrame = 0;
 };
 
-class Centipede
+class Centipede : public gfx::Drawable
 {
   public:
     static constexpr float Speed = Game::GridSize * 15;
@@ -78,7 +78,7 @@ class Centipede
     bool checkLaserCollision(gfx::FloatRect laser);
     bool checkPlayerCollision(gfx::FloatRect player);
     void update(float deltaTime);
-    void draw(gfx::RenderTarget& target) const;
+    void draw(SDL_Renderer* target) const;
 
     void reset();
     bool isDead() const;

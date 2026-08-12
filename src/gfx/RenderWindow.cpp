@@ -1,6 +1,6 @@
 /*
 SPDX-License-Identifier: BSD-3-Clause
-Copyright (c) 2024 Jackson Miller
+Copyright (c) 2026 Dennis Payne
 */
 
 #include "RenderWindow.hpp"
@@ -100,32 +100,13 @@ SDL_Renderer* RenderWindow::getRenderer() const
     return m_renderer;
 }
 
-void RenderWindow::draw(const Sprite& sprite)
+void RenderWindow::draw(const Drawable& sprite)
 {
     if (m_renderer == nullptr)
     {
         return;
     }
-    sprite.draw(*this);
-}
-
-void RenderWindow::draw(const RectangleShape& shape)
-{
-    if (m_renderer == nullptr)
-    {
-        return;
-    }
-    shape.draw(*this);
-}
-
-void RenderWindow::draw(const MushroomManager& manager)
-{
-    manager.draw(*this);
-}
-
-void RenderWindow::draw(const Centipede& centipede)
-{
-    centipede.draw(*this);
+    sprite.draw(m_renderer);
 }
 
 } // namespace gfx

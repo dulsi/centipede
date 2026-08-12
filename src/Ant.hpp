@@ -9,7 +9,6 @@ The ant class moves down making mushrooms.
 #pragma once
 #include <random>
 
-#include "gfx/RenderTarget.hpp"
 #include "gfx/RenderWindow.hpp"
 #include "gfx/Sprite.hpp"
 #include "gfx/Types.hpp"
@@ -25,7 +24,7 @@ class Ant : public gfx::Sprite
     void reset();
     void spawn();
     void update(float deltaTime);
-    void draw(gfx::RenderTarget& target) const;
+    void draw(SDL_Renderer* target) const;
 
     bool checkLaserCollision(gfx::FloatRect collider);
     gfx::FloatRect getCollider() const;

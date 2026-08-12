@@ -1,21 +1,17 @@
 /*
 SPDX-License-Identifier: BSD-3-Clause
-Copyright (c) 2024 Jackson Miller
+Copyright (c) 2026 Dennis Payne
 */
 
 #pragma once
 
 #include "Input.hpp"
 #include "RectangleShape.hpp"
-#include "RenderTarget.hpp"
 #include "Sprite.hpp"
 #include "Types.hpp"
 
 struct SDL_Renderer;
 struct SDL_Window;
-
-class Centipede;
-class MushroomManager;
 
 namespace gfx
 {
@@ -38,10 +34,7 @@ class RenderWindow
     void setPosition(int x, int y);
     [[nodiscard]] SDL_Renderer* getRenderer() const;
 
-    void draw(const Sprite& sprite);
-    void draw(const RectangleShape& shape);
-    void draw(const MushroomManager& manager);
-    void draw(const Centipede& centipede);
+    void draw(const Drawable& sprite);
 
   private:
     SDL_Window*   m_window   = nullptr;

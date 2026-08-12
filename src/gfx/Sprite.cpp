@@ -1,6 +1,6 @@
 /*
 SPDX-License-Identifier: BSD-3-Clause
-Copyright (c) 2024 Jackson Miller
+Copyright (c) 2026 Dennis Payne
 */
 
 #include "Sprite.hpp"
@@ -103,14 +103,14 @@ FloatRect Sprite::getGlobalBounds() const
     return FloatRect{left, top, width, height};
 }
 
-void Sprite::draw(RenderTarget& target) const
+void Sprite::draw(SDL_Renderer* target) const
 {
     if (getTexture() == nullptr)
     {
         return;
     }
 
-    SDL_Texture* texture = const_cast<Texture*>(getTexture())->getGpuTexture(target.getRenderer());
+    SDL_Texture* texture = const_cast<Texture*>(getTexture())->getGpuTexture(target);
     if (texture == nullptr)
     {
         return;
@@ -150,7 +150,7 @@ void Sprite::draw(RenderTarget& target) const
         flip = static_cast<SDL_RendererFlip>(flip | SDL_FLIP_VERTICAL);
     }
 
-    SDL_RenderCopyExF(target.getRenderer(), texture, &src, &dst, 0.0, nullptr, flip);
+    SDL_RenderCopyExF(target, texture, &src, &dst, 0.0, nullptr, flip);
 }
 
 } // namespace gfx

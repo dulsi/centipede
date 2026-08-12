@@ -1,17 +1,19 @@
 /*
 SPDX-License-Identifier: BSD-3-Clause
-Copyright (c) 2024 Jackson Miller
+Copyright (c) 2026 Dennis Payne
 */
 
 #pragma once
 
-#include "RenderTarget.hpp"
+#include "Drawable.hpp"
 #include "Types.hpp"
+
+struct SDL_Renderer;
 
 namespace gfx
 {
 
-class RectangleShape
+class RectangleShape : public Drawable
 {
   public:
     explicit RectangleShape(const Vector2f& size);
@@ -25,7 +27,7 @@ class RectangleShape
     [[nodiscard]] Color getFillColor() const;
     [[nodiscard]] FloatRect getGlobalBounds() const;
 
-    virtual void draw(RenderTarget& target) const;
+    void draw(SDL_Renderer* target) const;
 
   private:
     Vector2f  m_size;
