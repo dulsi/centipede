@@ -49,5 +49,4 @@ class Scorpion : public gfx::Sprite
 
     double m_moveTimer    = 0;
     double m_animationTimer = 0;
-    double m_respawnTimer = 0;
 };

@@ -32,7 +32,6 @@ Scorpion::Scorpion(gfx::FloatRect bounds) : m_rng{std::random_device{}()}
 
 void Scorpion::reset()
 {
-    m_respawnTimer = 0;
     m_alive = false;
 }
 
