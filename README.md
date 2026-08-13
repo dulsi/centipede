@@ -2,17 +2,17 @@
 
 Current Developer: dulsi@identicalsoftware.com
 
-## Made with SFML 2.6 and C++17
+## Made with SDL 2 and C++17
 
 - configure: `cmake -B build/`
 - compile:   `cmake --build build/`
-- run: `./build/bin/centipede`
+- run: `./build/bin/centicrawler`
 
-SMFL dependency must be installed before building.
+SDL2 dependency must be installed before building.
 
-Debian: `sudo apt install build-essential cmake git libsfml-dev`
+Debian: `sudo apt install build-essential cmake git libsdl2-dev libsdl2-image-dev`
 
-Fedora: `sudo dnf install gcc-c++ cmake git SFML-devel`
+Fedora: `sudo dnf install gcc-c++ cmake git SDL2-devel SDL2_image-devel`
 
 ## Details
 The centipede it going to destroy the fairy glade. Other bugs like spiders aid the invaders. You are a fairy tasked with stopping the

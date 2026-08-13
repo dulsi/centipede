@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.26)
 
 # Project name and version
-project(centipede LANGUAGES CXX VERSION 1.0)
+project(centicrawler LANGUAGES CXX VERSION 1.0)
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
