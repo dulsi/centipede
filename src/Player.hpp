@@ -63,6 +63,9 @@ class Player : public gfx::Sprite
      */
     void die();
 
+    /** Move back to the starting position. */
+    void reset();
+
     /**
      * Causes player to gain a life
      */
@@ -117,9 +120,6 @@ class Player : public gfx::Sprite
       {112, 16, 28, 32},
       {112, 64, 28, 32}
     };
-
-    /** Move back to the starting position. */
-    void reset();
 
     /** Seconds between animation direction */
     const double m_animationDuration = 0.1;

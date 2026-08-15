@@ -42,7 +42,7 @@ class Engine
     /**
      * Used to control the game loop state-machine
      */
-    enum class State { Start, Playing, LevelChange, GameOver };
+    enum class State { Start, Playing, LevelChange, DeathReset, GameOver };
 
     enum class CollisionTarget { Mushroom, Player1, Player2 };
 
@@ -56,6 +56,8 @@ class Engine
                         const std::unordered_set<CollisionTarget>& targets) const;
 
   private:
+    const double m_stateDuration = 1;
+
     /** Color for the game world background */
     static inline const gfx::Color WorldColor = gfx::Color::Black;
 
@@ -66,9 +68,6 @@ class Engine
      * default constructor sets up a static pointer to the only instance.
      */
     const TextureManager texMan;
-
-    /** The game view, sized to match Game::GameSize */
-    //sf::View m_view;
 
     /** The player-controlled starship */
     Player m_player[2];
@@ -101,6 +100,7 @@ class Engine
 
     std::chrono::steady_clock::time_point m_lastTime;
     std::chrono::milliseconds m_totalGameTime = std::chrono::milliseconds::zero();
+    double m_stateTimer = 0;
 
     /** Poll player input and hand-off to objects */
     void input();

@@ -172,8 +172,6 @@ void MushroomManager::addMushroom(gfx::Vector2f location)
 
 void MushroomManager::nextLevel()
 {
-    m_type++;
-    m_type %= 3;
     m_levelChangeTimer = 0;
 }
 
@@ -182,6 +180,8 @@ bool MushroomManager::update(float deltaTime)
     m_levelChangeTimer += deltaTime;
     if (m_levelChangeTimer >= m_levelChangeDuration)
     {
+        m_type++;
+        m_type %= 3;
         for (auto& shroom : m_shrooms)
         {
             shroom.setType(m_type);

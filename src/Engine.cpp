@@ -174,6 +174,27 @@ void Engine::input()
 void Engine::update(const float dtSeconds)
 {
     // only update during the actual game
+    if (state == State::DeathReset)
+    {
+        m_stateTimer += dtSeconds;
+        if (m_stateTimer >= m_stateDuration)
+        {
+            for (auto& player : m_player)
+            {
+                player.reset();
+            }
+            for (auto& laser : m_lasers)
+            {
+                laser.deactivate();
+            }
+            m_spider.reset();
+            m_scorpion.reset();
+            m_ant.reset();
+            m_centipede.reset();
+            state = State::Playing;
+        }
+        return;
+    }
     if ((state != State::Playing) && (state != State::LevelChange))
     {
         return;
@@ -197,16 +218,29 @@ void Engine::update(const float dtSeconds)
         }
         if (!m_spider.isDead())
         {
-            player.checkEnemyCollision(m_spider.getCollider());
+            if (player.checkEnemyCollision(m_spider.getCollider()))
+            {
+                state = State::DeathReset;
+                m_stateTimer = 0;
+                continue;
+            }
         }
         if (!m_ant.isDead())
         {
-            player.checkEnemyCollision(m_ant.getCollider());
+            if (player.checkEnemyCollision(m_ant.getCollider()))
+            {
+                state = State::DeathReset;
+                m_stateTimer = 0;
+                continue;
+            }
         }
 
         if (m_centipede.checkPlayerCollision(player.getCollider()))
         {
             player.die();
+            state = State::DeathReset;
+            m_stateTimer = 0;
+            continue;
         }
     }
 
@@ -304,7 +338,7 @@ void Engine::draw()
         // draw the start screen at beginning
         m_window.draw(m_startSprite);
     }
-    else if ((state == State::Playing) || (state == State::LevelChange))
+    else if ((state == State::Playing) || (state == State::LevelChange) || (state == State::DeathReset))
     {
         // draw all the objects during game-play
         m_window.draw(m_shroomMan);
@@ -318,20 +352,23 @@ void Engine::draw()
         // draw centipede(s)
         m_window.draw(m_centipede);
 
-        // draw lasers (automatically doesn't draw inactive ones)
-        for (const auto& laser : m_lasers)
+        if (state != State::DeathReset)
         {
-            m_window.draw(laser);
-        }
-
-        for (auto& player : m_player)
-        {
-            if (!player.isDead())
+            // draw lasers (automatically doesn't draw inactive ones)
+            for (const auto& laser : m_lasers)
             {
-                m_window.draw(player);
-                player.drawLives(m_window);
+                m_window.draw(laser);
             }
-            player.drawScore(m_window);
+
+            for (auto& player : m_player)
+            {
+                if (!player.isDead())
+                {
+                    m_window.draw(player);
+                    player.drawLives(m_window);
+                }
+                player.drawScore(m_window);
+            }
         }
     }
 
