@@ -29,8 +29,11 @@ Engine::Engine(gfx::RenderWindow& window)
       m_scorpion{Game::ScorpionArea},
       m_totalGameTime{std::chrono::milliseconds::zero()}
 {
-    // made my own startup image
     m_startSprite.setTexture(TextureManager::GetTexture("graphics/splash.png"));
+    m_overSprite.setTexture(TextureManager::GetTexture("graphics/game_over.png"));
+    int width = m_overSprite.getTextureRect().width;
+    m_overSprite.setPosition((Game::GameSize.x - (float)width) / 2, Game::GameSize.y / 3);
+    m_overSound = SoundManager::GetManager().GetSound("sounds/gameover.ogg");
 }
 
 /**
@@ -185,7 +188,7 @@ void Engine::update(const float dtSeconds)
             }
         }
         m_stateTimer += dtSeconds;
-        if (m_stateTimer >= m_stateDuration)
+        if (m_stateTimer >= m_deathDuration)
         {
             for (auto& player : m_player)
             {
@@ -205,10 +208,20 @@ void Engine::update(const float dtSeconds)
             if ((m_player[0].isDead()) && (m_player[1].isDead()))
             {
                 m_spider.reset(); // stop spider sound
-                state = State::Start;
+                m_stateTimer = 0;
+                state = State::GameOver;
+                SoundManager::GetManager().Play(m_overSound);
             }
         }
         return;
+    }
+    if (state == State::GameOver)
+    {
+        m_stateTimer += dtSeconds;
+        if (m_stateTimer >= m_overDuration)
+        {
+            state = State::Start;
+        }
     }
     if ((state != State::Playing) && (state != State::LevelChange))
     {
@@ -347,7 +360,7 @@ void Engine::draw()
         // draw the start screen at beginning
         m_window.draw(m_startSprite);
     }
-    else if ((state == State::Playing) || (state == State::LevelChange) || (state == State::DeathReset))
+    else if ((state == State::Playing) || (state == State::LevelChange) || (state == State::DeathReset) || (state == State::GameOver))
     {
         // draw all the objects during game-play
         m_window.draw(m_shroomMan);
@@ -379,6 +392,10 @@ void Engine::draw()
             }
             player.drawScore(m_window);
         }
+    }
+    if (state == State::GameOver)
+    {
+        m_window.draw(m_overSprite);
     }
 
     m_window.display();

@@ -21,6 +21,7 @@ Declare the Game Engine. Engine::run() is the main entrypoint into the game.
 #include "Player.hpp"
 #include "Scorpion.hpp"
 #include "Spider.hpp"
+#include "SoundManager.hpp"
 #include "TextureManager.hpp"
 
 /**
@@ -58,7 +59,8 @@ class Engine
     State getState() { return state; }
 
   private:
-    const double m_stateDuration = 2;
+    const double m_deathDuration = 2;
+    const double m_overDuration = 5;
 
     /** Color for the game world background */
     static inline const gfx::Color WorldColor = gfx::Color::Black;
@@ -99,8 +101,13 @@ class Engine
 
     size_t m_currentLaser = 0;
 
-    /** Start/Game over screen sprite */
+    /** Start screen sprite */
     gfx::Sprite m_startSprite;
+
+    /** Game over screen sprite */
+    gfx::Sprite m_overSprite;
+
+    Mix_Chunk* m_overSound;
 
     /** Game state machine */
     State state = State::Start;
