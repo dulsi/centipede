@@ -26,13 +26,13 @@ class RenderWindow
     RenderWindow& operator=(const RenderWindow&) = delete;
 
     bool create(unsigned int width, unsigned int height, const char* title, bool fullscreen);
-    [[nodiscard]] bool isOpen() const;
+    bool isOpen() const;
     void close();
-    [[nodiscard]] bool pollEvent(Event& event);
+    bool pollEvent(Event& event);
     void clear(const Color& color);
     void display();
     void setPosition(int x, int y);
-    [[nodiscard]] SDL_Renderer* getRenderer() const;
+    SDL_Renderer* getRenderer() const;
 
     void draw(const Drawable& sprite);
 

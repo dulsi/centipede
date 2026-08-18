@@ -74,9 +74,9 @@ struct FloatRect
     {
     }
 
-    [[nodiscard]] Vector2f getSize() const { return {width, height}; }
+    Vector2f getSize() const { return {width, height}; }
 
-    [[nodiscard]] bool intersects(const FloatRect& other) const
+    bool intersects(const FloatRect& other) const
     {
         const float aLeft   = left;
         const float aTop    = top;

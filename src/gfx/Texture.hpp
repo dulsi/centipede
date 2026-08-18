@@ -25,8 +25,8 @@ class Texture
 
     bool loadFromFile(const char* path);
 
-    [[nodiscard]] Vector2f getSize() const;
-    /*[[nodiscard]]*/ SDL_Texture* getGpuTexture(SDL_Renderer* renderer);
+    Vector2f getSize() const;
+    SDL_Texture* getGpuTexture(SDL_Renderer* renderer);
 
   private:
     void release();

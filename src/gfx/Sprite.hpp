@@ -16,20 +16,20 @@ class Sprite : public Drawable
 {
   public:
     void setTexture(const Texture& texture);
-    [[nodiscard]] const Texture* getTexture() const;
+    const Texture* getTexture() const;
 
     void setTextureRect(const IntRect& rect);
-    [[nodiscard]] IntRect getTextureRect() const;
-    [[nodiscard]] Vector2f getOrigin() const;
+    IntRect getTextureRect() const;
+    Vector2f getOrigin() const;
     void setOrigin(float x, float y);
     void setPosition(float x, float y);
     void setPosition(const Vector2f& position);
     void move(float dx, float dy);
     void setScale(const Vector2f& scale);
-    [[nodiscard]] Vector2f getScale() const;
-    [[nodiscard]] Vector2f getPosition() const;
-    [[nodiscard]] FloatRect getLocalBounds() const;
-    [[nodiscard]] FloatRect getGlobalBounds() const;
+    Vector2f getScale() const;
+    Vector2f getPosition() const;
+    FloatRect getLocalBounds() const;
+    FloatRect getGlobalBounds() const;
 
     void draw(SDL_Renderer* target) const;
 

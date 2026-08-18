@@ -32,8 +32,8 @@ enum class Key
     Num2,
 };
 
-[[nodiscard]] SDL_Scancode toScancode(Key key);
-[[nodiscard]] bool isKeyPressed(Key key);
+SDL_Scancode toScancode(Key key);
+bool isKeyPressed(Key key);
 
 } // namespace Keyboard
 

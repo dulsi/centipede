@@ -23,9 +23,9 @@ class RectangleShape : public Drawable
     void setPosition(float x, float y);
     void setPosition(const Vector2f& position);
     void move(float dx, float dy);
-    [[nodiscard]] Vector2f getPosition() const;
-    [[nodiscard]] Color getFillColor() const;
-    [[nodiscard]] FloatRect getGlobalBounds() const;
+    Vector2f getPosition() const;
+    Color getFillColor() const;
+    FloatRect getGlobalBounds() const;
 
     void draw(SDL_Renderer* target) const;
 
