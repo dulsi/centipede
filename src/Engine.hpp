@@ -52,11 +52,13 @@ class Engine
      * @param targets Which object types to check against
      * @return true if any target intersects rect
      */
-    bool CheckCollision(const gfx::FloatRect& rect,
+    bool checkCollision(const gfx::FloatRect& rect,
                         const std::unordered_set<CollisionTarget>& targets) const;
 
+    State getState() { return state; }
+
   private:
-    const double m_stateDuration = 1;
+    const double m_stateDuration = 2;
 
     /** Color for the game world background */
     static inline const gfx::Color WorldColor = gfx::Color::Black;

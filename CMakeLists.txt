@@ -13,6 +13,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # Add the executable
 add_executable(${PROJECT_NAME}
                 src/main.cpp
+                src/AnimatingSprite.cpp
                 src/Engine.cpp
                 src/SoundManager.cpp
                 src/TextureManager.cpp

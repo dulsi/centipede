@@ -82,3 +82,10 @@ License: CC0
 80 CC0 creature SFX #2  
 Created by [rubberduck](https://opengameart.org/content/80-cc0-creture-sfx-2)  
 License: CC0  
+
+### charmed.ogg
+Charmed  
+Created by [Alexandr Zhelanov](https://opengameart.org/content/charmed)  
+https://www.youtube.com/channel/UCxmng6_DMIayDwkiWGVzVRQ?view_as=subscriber totalnomus@gmail.com  
+Modified by Dennis Payne  
+License: CC-BY 4.0  

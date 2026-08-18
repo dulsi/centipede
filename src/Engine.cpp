@@ -177,6 +177,13 @@ void Engine::update(const float dtSeconds)
     // only update during the actual game
     if (state == State::DeathReset)
     {
+        for (auto& player : m_player)
+        {
+            if (!player.isDead())
+            {
+                player.update(dtSeconds, *this);
+            }
+        }
         m_stateTimer += dtSeconds;
         if (m_stateTimer >= m_stateDuration)
         {
@@ -193,6 +200,13 @@ void Engine::update(const float dtSeconds)
             m_ant.reset();
             m_centipede.reset();
             state = State::Playing;
+
+            // when the player dies, restart the game
+            if ((m_player[0].isDead()) && (m_player[1].isDead()))
+            {
+                m_spider.reset(); // stop spider sound
+                state = State::Start;
+            }
         }
         return;
     }
@@ -317,12 +331,6 @@ void Engine::update(const float dtSeconds)
         state = State::LevelChange;
         m_shroomMan.nextLevel();
     }
-
-    // when the player dies, restart the game
-    if ((m_player[0].isDead()) && (m_player[1].isDead()))
-    {
-        state = State::Start;
-    }
 }
 
 /** Draw all game objects to the window.
@@ -360,23 +368,23 @@ void Engine::draw()
             {
                 m_window.draw(laser);
             }
+        }
 
-            for (auto& player : m_player)
+        for (auto& player : m_player)
+        {
+            if (!player.isDead())
             {
-                if (!player.isDead())
-                {
-                    m_window.draw(player);
-                    player.drawLives(m_window);
-                }
-                player.drawScore(m_window);
+                m_window.draw(player);
+                player.drawLives(m_window);
             }
+            player.drawScore(m_window);
         }
     }
 
     m_window.display();
 }
 
-bool Engine::CheckCollision(const gfx::FloatRect& rect,
+bool Engine::checkCollision(const gfx::FloatRect& rect,
                               const std::unordered_set<CollisionTarget>& targets) const
 {
     if (targets.count(CollisionTarget::Mushroom) != 0U)

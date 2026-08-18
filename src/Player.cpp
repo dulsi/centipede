@@ -17,11 +17,11 @@ If a enemy collides with the player, a life is lost.
 #include "TextureManager.hpp"
 
 /** Constructor initializes the Sprite and other members and sets the origin to the center. */
-Player::Player(gfx::FloatRect bounds, int number)
+Player::Player(gfx::FloatRect bounds, int number) : AnimatingSprite(PlayerAnimationStates, PlayerAnimationOffset[number])
 {
     m_number = number;
     this->setTexture(TextureManager::GetTexture("graphics/fairy.png"));
-    this->setTextureRect(Player::PlayerAnimationOffset[m_number][m_animation]);
+    setCurrentAnimation(0);
 
     if (const auto* texture = this->getTexture())
     {
@@ -67,6 +67,8 @@ Player::Player(gfx::FloatRect bounds, int number)
         m_right = gfx::Keyboard::Key::G;
         m_fire  = gfx::Keyboard::Key::Q;
     }
+
+    m_deathSound = SoundManager::GetManager().GetSound("sounds/charmed.ogg");
 
     // move to starting position
     this->spawn();
@@ -118,6 +120,11 @@ void Player::disable()
 
 void Player::reset()
 {
+    if (getCurrentAnimation() == 1)
+    {
+        m_lives--;
+    }
+    setCurrentAnimation(0);
     m_lastFiredMs = std::chrono::milliseconds::zero();
     // reset position
     const auto& size = this->getLocalBounds();
@@ -143,13 +150,10 @@ void Player::handleInput()
  */
 void Player::update(float deltaTime, Engine& engine)
 {
-    m_animationTimer += deltaTime;
-    if (m_animationTimer > m_animationDuration)
+    AnimatingSprite::update(deltaTime);
+    if (engine.getState() == Engine::State::DeathReset)
     {
-        m_animation++;
-        m_animation %= AnimationFrames;
-        m_animationTimer = 0;
-        this->setTextureRect(Player::PlayerAnimationOffset[m_number][m_animation]);
+        return;
     }
     // moves `Speed` pixels every second.
     // opposite directions cancel out.
@@ -197,7 +201,7 @@ void Player::update(float deltaTime, Engine& engine)
         m_number == 0 ? Engine::CollisionTarget::Player2 : Engine::CollisionTarget::Player1,
     };
 
-    if (!engine.CheckCollision(collider, targets))
+    if (!engine.checkCollision(collider, targets))
     {
         this->setPosition(newPos);
     }
@@ -205,7 +209,7 @@ void Player::update(float deltaTime, Engine& engine)
     {
         gfx::FloatRect xRect = this->getGlobalBounds();
         xRect.left += dx;
-        if (!engine.CheckCollision(xRect, targets))
+        if (!engine.checkCollision(xRect, targets))
         {
             this->setPosition({newPos.x, oldPos.y});
         }
@@ -213,12 +217,17 @@ void Player::update(float deltaTime, Engine& engine)
         {
             gfx::FloatRect yRect = this->getGlobalBounds();
             yRect.top += dy;
-            if (!engine.CheckCollision(yRect, targets))
+            if (!engine.checkCollision(yRect, targets))
             {
                 this->setPosition({oldPos.x, newPos.y});
             }
         }
     }
+}
+
+void Player::update(float deltaTime)
+{
+    AnimatingSprite::update(deltaTime);
 }
 
 /** Detect if hit by the enemy and lose a life */
@@ -234,8 +243,8 @@ bool Player::checkEnemyCollision(gfx::FloatRect enemy)
 
 void Player::die()
 {
-    m_lives--;
-    this->reset();
+    setCurrentAnimation(1);
+    SoundManager::GetManager().Play(m_deathSound);
 }
 
 void Player::extraLife()

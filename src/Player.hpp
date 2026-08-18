@@ -11,11 +11,13 @@ Player character declaration.
 #include <array>
 #include <cstdint>
 #include <chrono>
+#include <vector>
 
 #include "gfx/RenderWindow.hpp"
-#include "gfx/Sprite.hpp"
 #include "gfx/Input.hpp"
 #include "gfx/Types.hpp"
+#include "AnimatingSprite.hpp"
+#include "SoundManager.hpp"
 
 class Engine;
 
@@ -23,7 +25,7 @@ class Engine;
  * The Player class inherits from Sprite and implements:
  * user input, enemy collisions, and keeping track of lives
  */
-class Player : public gfx::Sprite
+class Player : public AnimatingSprite
 {
   public:
     /** Construct a new Player object */
@@ -100,19 +102,25 @@ class Player : public gfx::Sprite
      void addScore(unsigned long points);
 
   private:
+    void update(float deltaTime);
+
     /** Player movement speed in pixels/second */
     static constexpr float Speed = 960;
 
     /** How many lives the player has at start */
     static constexpr int StartingLives = 3;
 
-    static constexpr int AnimationFrames = 2;
+    static inline const std::vector<AnimationStateInfo> PlayerAnimationStates =
+    {
+      { 0.1, {0, 1}, true },
+      { 0.4, {2, 3, 4, 5, 6}, false },
+    };
 
     /** Location of the player texture in sprite-sheet */
-    static inline const gfx::IntRect PlayerAnimationOffset[2][AnimationFrames] =
+    static inline const std::vector<gfx::IntRect> PlayerAnimationOffset[2] =
     {
-      { {16, 16, 28, 32}, {64, 16, 28, 32} },
-      { {16, 64, 28, 32}, {64, 64, 28, 32} },
+      { {16, 16, 28, 32}, {64, 16, 28, 32}, {160, 16, 28, 32}, {208, 16, 28, 32}, {256, 16, 28, 32}, {304, 16, 28, 32}, {336, 0, 28, 32} },
+      { {16, 64, 28, 32}, {64, 64, 28, 32}, {160, 64, 28, 32}, {208, 64, 28, 32}, {256, 64, 28, 32}, {304, 64, 28, 32}, {336, 0, 28, 32} },
     };
 
     static inline const gfx::IntRect PlayerPlusOffset[2] =
@@ -120,9 +128,6 @@ class Player : public gfx::Sprite
       {112, 16, 28, 32},
       {112, 64, 28, 32}
     };
-
-    /** Seconds between animation direction */
-    const double m_animationDuration = 0.1;
 
     /** The bounds of player movement */
     gfx::FloatRect m_bounds;
@@ -153,12 +158,10 @@ class Player : public gfx::Sprite
 
     gfx::Sprite m_scoreSprite;
 
-    int m_animation = 0;
-
-    double m_animationTimer = 0;
-
     /** The current lives remaining */
     int m_lives = Player::StartingLives;
 
     unsigned long m_score = 0;
+
+    Mix_Chunk* m_deathSound;
 };
