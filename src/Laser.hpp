@@ -13,6 +13,7 @@ I might go that route, it would simplify the fire-rate timing.
 #include "gfx/RectangleShape.hpp"
 #include "gfx/RenderWindow.hpp"
 #include "gfx/Types.hpp"
+#include "SoundManager.hpp"
 
 /**
  * Laser objects that can be recycled throughout the scene.
@@ -82,4 +83,6 @@ class Laser : public gfx::RectangleShape
     bool m_active = false;
 
     int m_player = 0;
+
+    Mix_Chunk* m_sound;
 };

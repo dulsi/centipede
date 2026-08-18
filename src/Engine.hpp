@@ -69,6 +69,11 @@ class Engine
      */
     const TextureManager texMan;
 
+    /** A cache for all sounds.
+     * default constructor sets up a static pointer to the only instance.
+     */
+    SoundManager soundMan;
+
     /** The player-controlled starship */
     Player m_player[2];
 

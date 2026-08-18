@@ -13,6 +13,7 @@ If the player hits the spider, a life is lost and the player is reset.
 #include "gfx/RenderWindow.hpp"
 #include "gfx/Sprite.hpp"
 #include "gfx/Types.hpp"
+#include "SoundManager.hpp"
 
 class Spider : public gfx::Sprite
 {
@@ -56,4 +57,7 @@ class Spider : public gfx::Sprite
     double m_respawnTimer = 0;
 
     bool m_moveLeft = false;
+
+    Mix_Chunk* m_sound;
+    int m_channel;
 };

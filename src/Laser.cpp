@@ -17,6 +17,7 @@ Laser::Laser() : gfx::RectangleShape{Laser::Size}
 {
     setFillColor(Laser::Color);
     setOrigin(Laser::Size.x / 2.f, Laser::Size.y / 2.f);
+    m_sound = SoundManager::GetManager().GetSound("sounds/laser.ogg");
 }
 
 /** Update sprite position based on elapsed seconds. */
@@ -55,6 +56,7 @@ void Laser::shoot(float x, float y, int player)
 
     setPosition(x, y);
     m_player = player;
+    SoundManager::GetManager().Play(m_sound);
 }
 
 void Laser::shoot(gfx::Vector2f start, int player)

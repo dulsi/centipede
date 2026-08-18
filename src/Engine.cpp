@@ -20,6 +20,7 @@ Defines the main game Engine and game loop logic.
 Engine::Engine(gfx::RenderWindow& window)
     : m_window(window),
       texMan(),
+      soundMan(),
       m_player{{Game::PlayerArea, 0}, {Game::PlayerArea, 1}},
       m_shroomMan{Game::ShroomArea},
       m_centipede{Game::EnemyArea, m_shroomMan},

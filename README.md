@@ -69,3 +69,16 @@ Intrepid Monochrome 8-bit Font
 [Font "Intrepid Monochrome"](https://opengameart.org/content/intrepid-monochrome-8-bit-font) by Hammer Forged Games  
 Scaled up 4 times original size  
 License: CC0  
+
+## Sound License
+
+### laser.ogg
+Final angelic sound.wav  
+Created by [hjohnl](https://freesound.org/people/hjohnl/sounds/61521/)  
+Modified by Dennis Payne  
+License: CC0  
+
+### bug_07.ogg
+80 CC0 creature SFX #2  
+Created by [rubberduck](https://opengameart.org/content/80-cc0-creture-sfx-2)  
+License: CC0  

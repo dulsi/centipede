@@ -27,6 +27,8 @@ Spider::Spider(gfx::FloatRect bounds) : m_rng{std::random_device{}()}
     bounds.height -= size.y;
     m_bounds = bounds;
 
+    m_sound = SoundManager::GetManager().GetSound("sounds/bug_07.ogg");
+    m_channel = -1;
     this->reset();
 }
 
@@ -34,6 +36,11 @@ void Spider::reset()
 {
     m_respawnTimer = 0;
     m_alive = false;
+    if (m_channel != -1)
+    {
+        SoundManager::GetManager().Halt(m_channel);
+    }
+    m_channel = -1;
 }
 
 void Spider::spawn()
@@ -44,6 +51,7 @@ void Spider::spawn()
     m_moveLeft = false;
     m_animation = 0;
     setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
+    m_channel = SoundManager::GetManager().Play(m_sound, true);
 }
 
 void Spider::draw(SDL_Renderer* target) const
@@ -188,6 +196,11 @@ bool Spider::checkLaserCollision(gfx::FloatRect other)
     if (wasHit)
     {
         m_alive = false;
+        if (m_channel != -1)
+        {
+            SoundManager::GetManager().Halt(m_channel);
+        }
+        m_channel = -1;
     }
     return wasHit;
 }

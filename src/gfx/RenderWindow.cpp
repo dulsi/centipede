@@ -31,7 +31,7 @@ RenderWindow::~RenderWindow()
 
 bool RenderWindow::create(const unsigned int width, const unsigned int height, const char* title, const bool fullscreen)
 {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
     {
         return false;
     }
