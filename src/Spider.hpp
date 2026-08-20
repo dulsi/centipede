@@ -11,11 +11,11 @@ If the player hits the spider, a life is lost and the player is reset.
 #include <random>
 
 #include "gfx/RenderWindow.hpp"
-#include "gfx/Sprite.hpp"
 #include "gfx/Types.hpp"
+#include "AnimatingSprite.hpp"
 #include "SoundManager.hpp"
 
-class Spider : public gfx::Sprite
+class Spider : public AnimatingSprite
 {
   public:
     Spider(gfx::FloatRect bounds);
@@ -35,25 +35,26 @@ class Spider : public gfx::Sprite
   private:
     static constexpr int AnimationFrames = 4;
 
-    static inline const gfx::IntRect SpiderAnimationOffset[AnimationFrames] =
+    static inline const std::vector<AnimationStateInfo> SpiderAnimationStates =
+    {
+      { 0.05, {0, 1, 2, 3}, true }
+    };
+    static inline const std::vector<gfx::IntRect> SpiderAnimationOffset =
     {
       {16, 16, 60, 32}, {96, 16, 60, 32}, {176, 16, 60, 32}, {256, 16, 60, 32}
     };
     static constexpr float Speed = 240;
 
     const double m_moveDuration = 0.5;
-    const double m_animationDuration = 0.05;
     const double m_respawnDuration = 5;
 
     gfx::FloatRect m_bounds;
     std::mt19937 m_rng;
 
     Moving m_direction;
-    int m_animation;
     bool m_alive = true;
 
     double m_moveTimer    = 0;
-    double m_animationTimer = 0;
     double m_respawnTimer = 0;
 
     bool m_moveLeft = false;

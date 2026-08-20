@@ -94,7 +94,11 @@ void Ant::update(float deltaTime)
         {
             auto where = getPosition();
             where.y = (float)(((int)where.y / Game::GridSize) * Game::GridSize) + Game::GridSize / 2.f;
-            m_shroomMan.addMushroom(where);
+            // Don't spawn at the bottom of the screen.
+            if (where.y < Game::GameSize.y - (Game::GridSize * 2))
+            {
+                m_shroomMan.addMushroom(where);
+            }
         }
     }
 }

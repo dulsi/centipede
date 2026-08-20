@@ -12,11 +12,10 @@ Spider class definition and implementation
 #include "Spider.hpp"
 #include "TextureManager.hpp"
 
-Spider::Spider(gfx::FloatRect bounds) : m_rng{std::random_device{}()}
+Spider::Spider(gfx::FloatRect bounds) : AnimatingSprite(SpiderAnimationStates, SpiderAnimationOffset), m_rng{std::random_device{}()}
 {
     setTexture(TextureManager::GetTexture("graphics/spider.png"));
-    m_animation = 0;
-    setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
+    setCurrentAnimation(0);
 
     const auto& size = getLocalBounds().getSize();
     setOrigin(size.x / 2.f, size.y / 2.f);
@@ -49,8 +48,7 @@ void Spider::spawn()
     m_direction = Moving::UpRight;
     m_alive     = true;
     m_moveLeft = false;
-    m_animation = 0;
-    setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
+    setCurrentAnimation(0);
     m_channel = SoundManager::GetManager().Play(m_sound, true);
 }
 
@@ -98,15 +96,8 @@ void Spider::update(float deltaTime)
         break;
     }
 
+    AnimatingSprite::update(deltaTime);
     m_moveTimer += deltaTime;
-    m_animationTimer += deltaTime;
-    if (m_animationTimer >= m_animationDuration)
-    {
-        m_animation++;
-        m_animation %= AnimationFrames;
-        setTextureRect(Spider::SpiderAnimationOffset[m_animation]);
-        m_animationTimer = 0;
-    }
     if (m_moveTimer >= m_moveDuration)
     {
         std::vector<Moving> allowedDirections;
