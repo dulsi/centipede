@@ -10,10 +10,10 @@ The scorpion class moves across the field poisoning mushrooms.
 #include <random>
 
 #include "gfx/RenderWindow.hpp"
-#include "gfx/Sprite.hpp"
 #include "gfx/Types.hpp"
+#include "AnimatingSprite.hpp"
 
-class Scorpion : public gfx::Sprite
+class Scorpion : public AnimatingSprite
 {
   public:
     Scorpion(gfx::FloatRect bounds);
@@ -31,22 +31,23 @@ class Scorpion : public gfx::Sprite
   private:
     static constexpr int AnimationFrames = 4;
 
-    static inline const gfx::IntRect ScorpionAnimationOffset[AnimationFrames] =
+    static inline const std::vector<AnimationStateInfo> ScorpionAnimationStates =
+    {
+      { 0.05, {0, 1, 2, 3}, true }
+    };
+    static inline const std::vector<gfx::IntRect> ScorpionAnimationOffset =
     {
       {16, 16, 60, 32}, {96, 16, 60, 32}, {176, 16, 60, 32}, {256, 16, 60, 32}
     };
     static constexpr float Speed = 240;
 
-    const double m_animationDuration = 0.05;
     const double m_respawnDuration = 5;
     const size_t m_spawnChance = 5;
 
     gfx::FloatRect m_bounds;
     std::mt19937 m_rng;
 
-    int m_animation;
     bool m_alive = true;
 
     double m_moveTimer    = 0;
-    double m_animationTimer = 0;
 };

@@ -12,11 +12,10 @@ Scorpion class definition and implementation
 #include "Settings.hpp"
 #include "TextureManager.hpp"
 
-Scorpion::Scorpion(gfx::FloatRect bounds) : m_rng{std::random_device{}()}
+Scorpion::Scorpion(gfx::FloatRect bounds) : AnimatingSprite(ScorpionAnimationStates, ScorpionAnimationOffset), m_rng{std::random_device{}()}
 {
     setTexture(TextureManager::GetTexture("graphics/scorpion.png"));
-    m_animation = 0;
-    setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
+    setCurrentAnimation(0);
 
     const auto& size = getLocalBounds().getSize();
     setOrigin(size.x / 2.f, size.y / 2.f);
@@ -41,8 +40,7 @@ void Scorpion::spawn()
     size_t y = dist(m_rng) * Game::GridSize;
     setPosition(m_bounds.left + m_bounds.width, m_bounds.top + (float)y);
     m_alive     = true;
-    m_animation = 0;
-    setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
+    setCurrentAnimation(0);
 }
 
 void Scorpion::draw(SDL_Renderer* target) const
@@ -68,15 +66,8 @@ void Scorpion::update(float deltaTime)
     float distance = Scorpion::Speed * deltaTime;
     move(-distance, 0.0);
 
+    AnimatingSprite::update(deltaTime);
     m_moveTimer += deltaTime;
-    m_animationTimer += deltaTime;
-    if (m_animationTimer >= m_animationDuration)
-    {
-        m_animation++;
-        m_animation %= AnimationFrames;
-        setTextureRect(Scorpion::ScorpionAnimationOffset[m_animation]);
-        m_animationTimer = 0;
-    }
 
     const auto& size = getLocalBounds().getSize();
     if (getPosition().x < m_bounds.left - size.x / 2.f)
