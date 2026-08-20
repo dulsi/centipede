@@ -12,11 +12,10 @@ Ant class definition and implementation
 #include "Settings.hpp"
 #include "TextureManager.hpp"
 
-Ant::Ant(gfx::FloatRect bounds, MushroomManager& shroomMan) : m_rng{std::random_device{}()}, m_shroomMan{shroomMan}
+Ant::Ant(gfx::FloatRect bounds, MushroomManager& shroomMan) : AnimatingSprite(AntAnimationStates, AntAnimationOffset), m_rng{std::random_device{}()}, m_shroomMan{shroomMan}
 {
     setTexture(TextureManager::GetTexture("graphics/ant.png"));
-    m_animation = 0;
-    setTextureRect(Ant::AntAnimationOffset[m_animation]);
+    setCurrentAnimation(0);
     m_health = 2;
 
     const auto& size = getLocalBounds().getSize();
@@ -43,9 +42,8 @@ void Ant::spawn()
     size_t x = dist(m_rng) * Game::GridSize;
     setPosition(m_bounds.left + (float)x, m_bounds.top);
     m_alive     = true;
-    m_animation = 0;
     m_health = 2;
-    setTextureRect(Ant::AntAnimationOffset[m_animation]);
+    setCurrentAnimation(0);
 }
 
 void Ant::draw(SDL_Renderer* target) const
@@ -71,15 +69,8 @@ void Ant::update(float deltaTime)
     float distance = Ant::Speed * deltaTime;
     move(0.0, distance);
 
+    AnimatingSprite::update(deltaTime);
     m_moveTimer += deltaTime;
-    m_animationTimer += deltaTime;
-    if (m_animationTimer >= m_animationDuration)
-    {
-        m_animation++;
-        m_animation %= AnimationFrames;
-        setTextureRect(Ant::AntAnimationOffset[m_animation]);
-        m_animationTimer = 0;
-    }
 
     const auto& size = getLocalBounds().getSize();
     if (getPosition().y > m_bounds.top + m_bounds.height + size.x / 2.f)

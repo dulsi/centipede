@@ -29,8 +29,6 @@ class Scorpion : public AnimatingSprite
     bool isDead() const;
 
   private:
-    static constexpr int AnimationFrames = 4;
-
     static inline const std::vector<AnimationStateInfo> ScorpionAnimationStates =
     {
       { 0.05, {0, 1, 2, 3}, true }
